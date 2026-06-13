@@ -1,81 +1,25 @@
-competition_id,season_id,competition_name,country_name,season_name
-2,27,Premier League,England,2015/2016
-2,44,Premier League,England,2003/2004
-7,27,Ligue 1,France,2015/2016
-7,108,Ligue 1,France,2021/2022
-7,235,Ligue 1,France,2022/2023
-9,27,1. Bundesliga,Germany,2015/2016
-9,281,1. Bundesliga,Germany,2023/2024
-11,1,La Liga,Spain,2017/2018
-11,2,La Liga,Spain,2016/2017
-11,4,La Liga,Spain,2018/2019
-11,21,La Liga,Spain,2009/2010
-11,22,La Liga,Spain,2010/2011
-11,23,La Liga,Spain,2011/2012
-11,24,La Liga,Spain,2012/2013
-11,25,La Liga,Spain,2013/2014
-11,26,La Liga,Spain,2014/2015
-11,27,La Liga,Spain,2015/2016
-11,37,La Liga,Spain,2004/2005
-11,38,La Liga,Spain,2005/2006
-11,39,La Liga,Spain,2006/2007
-11,40,La Liga,Spain,2007/2008
-11,41,La Liga,Spain,2008/2009
-11,42,La Liga,Spain,2019/2020
-11,90,La Liga,Spain,2020/2021
-11,278,La Liga,Spain,1973/1974
-12,27,Serie A,Italy,2015/2016
-12,86,Serie A,Italy,1986/1987
-16,1,Champions League,Europe,2017/2018
-16,2,Champions League,Europe,2016/2017
-16,4,Champions League,Europe,2018/2019
-16,21,Champions League,Europe,2009/2010
-16,22,Champions League,Europe,2010/2011
-16,23,Champions League,Europe,2011/2012
-16,24,Champions League,Europe,2012/2013
-16,25,Champions League,Europe,2013/2014
-16,26,Champions League,Europe,2014/2015
-16,27,Champions League,Europe,2015/2016
-16,37,Champions League,Europe,2004/2005
-16,39,Champions League,Europe,2006/2007
-16,41,Champions League,Europe,2008/2009
-16,44,Champions League,Europe,2003/2004
-16,71,Champions League,Europe,1971/1972
-16,76,Champions League,Europe,1999/2000
-16,276,Champions League,Europe,1970/1971
-16,277,Champions League,Europe,1972/1973
-35,75,UEFA Europa League,Europe,1988/1989
-37,4,FA Women's Super League,England,2018/2019
-37,42,FA Women's Super League,England,2019/2020
-37,90,FA Women's Super League,England,2020/2021
-37,281,FA Women's Super League,England,2023/2024
-43,3,FIFA World Cup,International,2018
-43,51,FIFA World Cup,International,1974
-43,54,FIFA World Cup,International,1986
-43,55,FIFA World Cup,International,1990
-43,106,FIFA World Cup,International,2022
-43,269,FIFA World Cup,International,1958
-43,270,FIFA World Cup,International,1962
-43,272,FIFA World Cup,International,1970
-44,107,Major League Soccer,United States of America,2023
-49,3,NWSL,United States of America,2018
-49,107,NWSL,United States of America,2023
-53,106,UEFA Women's Euro,Europe,2022
-53,315,UEFA Women's Euro,Europe,2025
-55,43,UEFA Euro,Europe,2020
-55,282,UEFA Euro,Europe,2024
-72,30,Women's World Cup,International,2019
-72,107,Women's World Cup,International,2023
-81,48,Liga Profesional,Argentina,1997/1998
-81,275,Liga Profesional,Argentina,1981
-87,84,Copa del Rey,Spain,1983/1984
-87,268,Copa del Rey,Spain,1982/1983
-87,279,Copa del Rey,Spain,1977/1978
-116,68,North American League,North and Central America,1977
-131,281,Serie A Women,Italy,2023/2024
-135,281,Frauen Bundesliga,Germany,2023/2024
-182,281,Liga F,Spain,2023/2024
-223,282,Copa America,South America,2024
-1238,108,Indian Super league,India,2021/2022
-1267,107,African Cup of Nations,Africa,2023
-1470,274,FIFA U20 World Cup,International,1979
+competition_id,competition_name,country_name,competition_type
+2,Premier League,England,Domestic
+7,Ligue 1,France,Domestic
+9,1. Bundesliga,Germany,Domestic
+11,La Liga,Spain,Domestic
+12,Serie A,Italy,Domestic
+16,Champions League,Europe,Domestic
+35,UEFA Europa League,Europe,Domestic
+37,FA Women's Super League,England,Domestic
+43,FIFA World Cup,International,International
+44,Major League Soccer,United States of America,Domestic
+49,NWSL,United States of America,Domestic
+53,UEFA Women's Euro,Europe,International
+55,UEFA Euro,Europe,International
+72,Women's World Cup,International,International
+81,Liga Profesional,Argentina,Domestic
+87,Copa del Rey,Spain,Domestic
+116,North American League,North and Central America,Domestic
+131,Serie A Women,Italy,Domestic
+135,Frauen Bundesliga,Germany,Domestic
+182,Liga F,Spain,Domestic
+223,Copa America,South America,International
+1238,Indian Super league,India,Domestic
+1267,African Cup of Nations,Africa,International
+1470,FIFA U20 World Cup,International,International

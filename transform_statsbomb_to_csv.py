@@ -18,6 +18,8 @@ import pandas as pd
 MAX_COMPETITIONS: int | None = None
 MAX_MATCHES: int | None = None
 USE_EVENTS = True
+SHOW_PREVIEW = True
+PREVIEW_ROWS = 5
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
@@ -102,13 +104,16 @@ def upsert_team(teams: dict[int, dict[str, Any]], team: dict[str, Any]) -> None:
     candidate = {
         "team_id": team_id,
         "team_name": clean_string(team.get("team_name")),
-        "country_name": clean_string(team.get("country_name")),
+        "country": clean_string(team.get("country")) or "Unknown",
+        "city": clean_string(team.get("city")),
+        "stadium": clean_string(team.get("stadium")),
+        "founded_year": to_int(team.get("founded_year")),
     }
     if team_id not in teams:
         teams[team_id] = candidate
         return
 
-    for key in ("team_name", "country_name"):
+    for key in ("team_name", "country", "city", "stadium", "founded_year"):
         teams[team_id][key] = first_not_null(teams[team_id].get(key), candidate[key])
 
 
@@ -124,22 +129,38 @@ def upsert_player(players: dict[int, dict[str, Any]], player: dict[str, Any]) ->
         "birth_date": normalize_date(player.get("birth_date")),
         "nationality": clean_string(player.get("nationality")),
         "position": clean_string(player.get("position")),
+        "preferred_foot": clean_string(player.get("preferred_foot")),
         "team_id": to_int(player.get("team_id")),
     }
     if player_id not in players:
         players[player_id] = candidate
         return
 
-    for key in ("player_name", "birth_date", "nationality", "position", "team_id"):
+    for key in (
+        "player_name",
+        "birth_date",
+        "nationality",
+        "position",
+        "preferred_foot",
+        "team_id",
+    ):
         players[player_id][key] = first_not_null(players[player_id].get(key), candidate[key])
 
 
 def extract_position(player: dict[str, Any]) -> str | None:
-    """Take the first usable position listed for a player."""
+    """Map StatsBomb's detailed positions to the schema's four broad groups."""
     for position in player.get("positions") or []:
         name = clean_string(position.get("position"))
-        if name:
-            return name
+        if not name:
+            continue
+        if name == "Goalkeeper":
+            return "Goalkeeper"
+        if "Back" in name:
+            return "Defender"
+        if "Midfield" in name:
+            return "Midfielder"
+        if "Forward" in name or "Wing" in name or "Striker" in name:
+            return "Forward"
     return None
 
 
@@ -324,7 +345,7 @@ def clean_dataframe(
         return dataframe
 
     dataframe = dataframe.drop_duplicates(subset=deduplicate_by, keep="first")
-    for column in dataframe.select_dtypes(include=["object"]).columns:
+    for column in dataframe.select_dtypes(include=["object", "str"]).columns:
         dataframe[column] = dataframe[column].replace(r"^\s*$", pd.NA, regex=True)
     for column in id_columns:
         dataframe[column] = pd.to_numeric(dataframe[column], errors="coerce").astype("Int64")
@@ -340,7 +361,7 @@ def main() -> None:
         )
 
     selected_competitions = competitions_json[:MAX_COMPETITIONS]
-    competitions: dict[tuple[int, int], dict[str, Any]] = {}
+    competitions: dict[int, dict[str, Any]] = {}
     teams: dict[int, dict[str, Any]] = {}
     matches: dict[int, dict[str, Any]] = {}
     players: dict[int, dict[str, Any]] = {}
@@ -355,13 +376,16 @@ def main() -> None:
             warn("Se omitió una competición con competition_id o season_id inválido.")
             continue
 
-        competition_key = (competition_id, season_id)
-        competitions[competition_key] = {
+        # The schema stores one row per competition. Seasons belong to matches.
+        competitions[competition_id] = {
             "competition_id": competition_id,
-            "season_id": season_id,
             "competition_name": clean_string(competition.get("competition_name")),
             "country_name": clean_string(competition.get("country_name")),
-            "season_name": clean_string(competition.get("season_name")),
+            "competition_type": (
+                "International"
+                if competition.get("competition_international") is True
+                else "Domestic"
+            ),
         }
 
         matches_path = DATA_DIR / "matches" / str(competition_id) / f"{season_id}.json"
@@ -389,7 +413,7 @@ def main() -> None:
                 {
                     "team_id": home_team_id,
                     "team_name": home_team.get("home_team_name"),
-                    "country_name": nested_name(home_team.get("home_team_country")),
+                    "country": nested_name(home_team.get("home_team_country")),
                 },
             )
             upsert_team(
@@ -397,20 +421,19 @@ def main() -> None:
                 {
                     "team_id": away_team_id,
                     "team_name": away_team.get("away_team_name"),
-                    "country_name": nested_name(away_team.get("away_team_country")),
+                    "country": nested_name(away_team.get("away_team_country")),
                 },
             )
 
             matches[match_id] = {
                 "match_id": match_id,
                 "competition_id": competition_id,
-                "season_id": season_id,
                 "match_date": normalize_date(match.get("match_date")),
                 "home_team_id": home_team_id,
                 "away_team_id": away_team_id,
-                "home_score": to_int(match.get("home_score")) or 0,
-                "away_score": to_int(match.get("away_score")) or 0,
-                "season_name": clean_string(competition.get("season_name")),
+                "home_goals": to_int(match.get("home_score")) or 0,
+                "away_goals": to_int(match.get("away_score")) or 0,
+                "season": clean_string(competition.get("season_name")),
             }
 
             # A missing lineup does not stop later matches from being processed.
@@ -427,7 +450,7 @@ def main() -> None:
                     {
                         "team_id": lineup_team_id,
                         "team_name": team_lineup.get("team_name"),
-                        "country_name": None,
+                        "country": None,
                     },
                 )
 
@@ -444,6 +467,7 @@ def main() -> None:
                             "birth_date": player.get("birth_date"),
                             "nationality": nested_name(player.get("country")),
                             "position": extract_position(player),
+                            "preferred_foot": None,
                             "team_id": lineup_team_id,
                         },
                     )
@@ -473,10 +497,7 @@ def main() -> None:
                 metrics = event_metrics.get(player_id, empty_metrics())
                 fact = {
                     "player_id": player_id,
-                    "team_id": team_id,
                     "match_id": match_id,
-                    "competition_id": competition_id,
-                    "season_id": season_id,
                     "minutes_played": estimate_minutes(
                         player_id,
                         bool(events_json),
@@ -497,22 +518,27 @@ def main() -> None:
 
     competition_columns = [
         "competition_id",
-        "season_id",
         "competition_name",
         "country_name",
-        "season_name",
+        "competition_type",
     ]
-    team_columns = ["team_id", "team_name", "country_name"]
+    team_columns = [
+        "team_id",
+        "team_name",
+        "country",
+        "city",
+        "stadium",
+        "founded_year",
+    ]
     match_columns = [
         "match_id",
         "competition_id",
-        "season_id",
         "match_date",
         "home_team_id",
         "away_team_id",
-        "home_score",
-        "away_score",
-        "season_name",
+        "home_goals",
+        "away_goals",
+        "season",
     ]
     player_columns = [
         "player_id",
@@ -520,15 +546,13 @@ def main() -> None:
         "birth_date",
         "nationality",
         "position",
+        "preferred_foot",
         "team_id",
     ]
     stats_columns = [
         "stat_id",
         "player_id",
-        "team_id",
         "match_id",
-        "competition_id",
-        "season_id",
         "minutes_played",
         "goals",
         "assists",
@@ -544,16 +568,16 @@ def main() -> None:
     competition_df = clean_dataframe(
         list(competitions.values()),
         competition_columns,
-        ["competition_id", "season_id"],
-        ["competition_id", "season_id"],
-    ).sort_values(["competition_id", "season_id"])
+        ["competition_id"],
+        ["competition_id"],
+    ).sort_values("competition_id")
     team_df = clean_dataframe(
         list(teams.values()), team_columns, ["team_id"], ["team_id"]
     ).sort_values("team_id")
     match_df = clean_dataframe(
         list(matches.values()),
         match_columns,
-        ["match_id", "competition_id", "season_id", "home_team_id", "away_team_id"],
+        ["match_id", "competition_id", "home_team_id", "away_team_id"],
         ["match_id"],
     ).sort_values("match_id")
     player_df = clean_dataframe(
@@ -565,7 +589,7 @@ def main() -> None:
     player_match_stats_df = clean_dataframe(
         facts,
         [column for column in stats_columns if column != "stat_id"],
-        ["player_id", "team_id", "match_id", "competition_id", "season_id"],
+        ["player_id", "match_id"],
         ["player_id", "match_id"],
     ).sort_values(["match_id", "player_id"]).reset_index(drop=True)
     player_match_stats_df.insert(
@@ -576,7 +600,7 @@ def main() -> None:
     outputs = {
         "competition.csv": competition_df,
         "team.csv": team_df,
-        "match.csv": match_df,
+        "football_match.csv": match_df,
         "player.csv": player_df,
         "player_match_stats.csv": player_match_stats_df,
     }
@@ -590,6 +614,17 @@ def main() -> None:
     print(f"- Jugadores generados: {len(player_df)}")
     print(f"- Filas en player_match_stats: {len(player_match_stats_df)}")
     print(f"- CSV guardados en: {OUTPUT_DIR}")
+
+    # Muestra una pequeña vista previa para revisar visualmente los datos
+    # transformados antes de cargarlos en MySQL.
+    if SHOW_PREVIEW:
+        print(f"\nVista previa de los datos ({PREVIEW_ROWS} filas por tabla):")
+        for filename, dataframe in outputs.items():
+            print(f"\n--- {filename} ---")
+            if dataframe.empty:
+                print("[Sin filas]")
+            else:
+                print(dataframe.head(PREVIEW_ROWS).to_string(index=False))
 
 
 if __name__ == "__main__":

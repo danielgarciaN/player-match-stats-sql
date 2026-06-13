@@ -13,7 +13,7 @@ La separo en una dimensión para no repetir el nombre, país o estadio
 cada vez que aparezca un equipo en un partido o en un jugador.
 */
 
-CREATE TABLE IF NOT EXISTS TEAM (
+CREATE TABLE IF NOT EXISTS team (
     team_id INT NOT NULL,
     team_name VARCHAR(150) NOT NULL,
     country VARCHAR(100) NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS TEAM (
     -- Control básico para evitar años imposibles.
     CONSTRAINT chk_team_founded_year
         CHECK (founded_year IS NULL OR founded_year BETWEEN 1800 AND 2100)
-)
+);
 
 
 /*
@@ -38,7 +38,7 @@ Contiene las competiciones en las que se juegan los partidos.
 Es una dimensión porque describe el contexto del partido.
 */
 
-CREATE TABLE IF NOT EXISTS COMPETITION (
+CREATE TABLE IF NOT EXISTS competition (
     competition_id INT NOT NULL,
     competition_name VARCHAR(150) NOT NULL,
     country_name VARCHAR(100) NOT NULL,
@@ -52,18 +52,19 @@ CREATE TABLE IF NOT EXISTS COMPETITION (
         country_name,
         competition_type
     )
-) 
+);
 
 
 /*
-TABLA: match
+TABLA: football_match
 Guarda la información de cada partido.
 Aunque un partido es un evento, aquí funciona como dimensión
 porque sirve para contextualizar las estadísticas de los jugadores.
 */
 
-CREATE TABLE IF NOT EXISTS `MATCH` (
+CREATE TABLE IF NOT EXISTS football_match (
     match_id INT NOT NULL,
+    competition_id INT NOT NULL,
     match_date DATE NOT NULL,
     home_team_id INT NOT NULL,
     away_team_id INT NOT NULL,
@@ -71,17 +72,17 @@ CREATE TABLE IF NOT EXISTS `MATCH` (
     away_goals INT NOT NULL DEFAULT 0,
     season VARCHAR(20) NOT NULL,
 
-    CONSTRAINT pk_match PRIMARY KEY (match_id),
+    CONSTRAINT pk_football_match PRIMARY KEY (match_id),
 
-    -- No tiene sentido que un marcador sea negativo.
     CONSTRAINT chk_match_home_goals CHECK (home_goals >= 0),
     CONSTRAINT chk_match_away_goals CHECK (away_goals >= 0),
 
-    -- Un equipo no puede jugar contra sí mismo.
-    CONSTRAINT chk_match_different_teams
-        CHECK (home_team_id <> away_team_id),
+    CONSTRAINT fk_match_competition
+        FOREIGN KEY (competition_id)
+        REFERENCES competition(competition_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
 
-    -- Relaciono local y visitante con team.
     CONSTRAINT fk_match_home_team
         FOREIGN KEY (home_team_id)
         REFERENCES team(team_id)
@@ -93,8 +94,11 @@ CREATE TABLE IF NOT EXISTS `MATCH` (
         REFERENCES team(team_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
-) 
-
+        
+	-- La regla home_team_id <> away_team_id se validará en el EDA.
+    -- MySQL no permite bien este CHECK cuando las columnas también participan en FKs.
+    
+);
 
 /*
 TABLA: Player
@@ -103,7 +107,7 @@ Incluyo team_id aquí porque quiero analizar la edad y fecha
 de nacimiento de los jugadores por equipo.
 */
 
-CREATE TABLE IF NOT EXISTS PLAYER (
+CREATE TABLE IF NOT EXISTS player (
     player_id INT NOT NULL,
     player_name VARCHAR(150) NOT NULL,
     birth_date DATE,
@@ -134,7 +138,7 @@ CREATE TABLE IF NOT EXISTS PLAYER (
         REFERENCES team(team_id)
         ON UPDATE CASCADE
         ON DELETE SET NULL
-) 
+);
 
 
 /*
@@ -147,11 +151,10 @@ Las métricas como goles, asistencias, minutos, pases o rating
 van aquí porque cambian en cada partido.
 */
 
-CREATE TABLE IF NOT EXISTS PLAYER_MATCH_STATS (
+CREATE TABLE IF NOT EXISTS player_match_stats (
     stat_id INT NOT NULL AUTO_INCREMENT,
     player_id INT NOT NULL,
     match_id INT NOT NULL,
-    competition_id INT NOT NULL,
 
     minutes_played INT NOT NULL DEFAULT 0,
     goals INT NOT NULL DEFAULT 0,
@@ -166,10 +169,8 @@ CREATE TABLE IF NOT EXISTS PLAYER_MATCH_STATS (
 
     CONSTRAINT pk_player_match_stats PRIMARY KEY (stat_id),
 
-    -- Evita cargar dos veces las estadísticas del mismo jugador en el mismo partido.
     CONSTRAINT uq_player_match_stats_player_match UNIQUE (player_id, match_id),
 
-    -- Reglas básicas de calidad de datos.
     CONSTRAINT chk_player_match_stats_minutes_played
         CHECK (minutes_played BETWEEN 0 AND 120),
 
@@ -189,7 +190,6 @@ CREATE TABLE IF NOT EXISTS PLAYER_MATCH_STATS (
     CONSTRAINT chk_player_match_stats_rating
         CHECK (rating IS NULL OR rating BETWEEN 0 AND 10),
 
-    -- Relaciones con las dimensiones.
     CONSTRAINT fk_player_match_stats_player
         FOREIGN KEY (player_id)
         REFERENCES player(player_id)
@@ -198,18 +198,10 @@ CREATE TABLE IF NOT EXISTS PLAYER_MATCH_STATS (
 
     CONSTRAINT fk_player_match_stats_match
         FOREIGN KEY (match_id)
-        REFERENCES `match`(match_id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_player_match_stats_competition
-        FOREIGN KEY (competition_id)
-        REFERENCES competition(competition_id)
+        REFERENCES football_match(match_id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
-) 
-
-
+);
 /*
 ÍNDICES
 Los índices ayudan a acelerar consultas que se repetirán mucho

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -104,16 +104,14 @@ def upsert_team(teams: dict[int, dict[str, Any]], team: dict[str, Any]) -> None:
     candidate = {
         "team_id": team_id,
         "team_name": clean_string(team.get("team_name")),
-        "country": clean_string(team.get("country")) or "Unknown",
-        "city": clean_string(team.get("city")),
+        "country": clean_string(team.get("country")),
         "stadium": clean_string(team.get("stadium")),
-        "founded_year": to_int(team.get("founded_year")),
     }
     if team_id not in teams:
         teams[team_id] = candidate
         return
 
-    for key in ("team_name", "country", "city", "stadium", "founded_year"):
+    for key in ("team_name", "country", "stadium"):
         teams[team_id][key] = first_not_null(teams[team_id].get(key), candidate[key])
 
 
@@ -126,10 +124,8 @@ def upsert_player(players: dict[int, dict[str, Any]], player: dict[str, Any]) ->
     candidate = {
         "player_id": player_id,
         "player_name": clean_string(player.get("player_name")),
-        "birth_date": normalize_date(player.get("birth_date")),
         "nationality": clean_string(player.get("nationality")),
         "position": clean_string(player.get("position")),
-        "preferred_foot": clean_string(player.get("preferred_foot")),
         "team_id": to_int(player.get("team_id")),
     }
     if player_id not in players:
@@ -138,10 +134,8 @@ def upsert_player(players: dict[int, dict[str, Any]], player: dict[str, Any]) ->
 
     for key in (
         "player_name",
-        "birth_date",
         "nationality",
         "position",
-        "preferred_foot",
         "team_id",
     ):
         players[player_id][key] = first_not_null(players[player_id].get(key), candidate[key])
@@ -366,6 +360,8 @@ def main() -> None:
     matches: dict[int, dict[str, Any]] = {}
     players: dict[int, dict[str, Any]] = {}
     facts: list[dict[str, Any]] = []
+    team_stadium_counts: dict[int, Counter[str]] = defaultdict(Counter)
+    team_any_stadium_counts: dict[int, Counter[str]] = defaultdict(Counter)
     matches_processed = 0
     stop_processing = False
 
@@ -407,13 +403,20 @@ def main() -> None:
             away_team = match.get("away_team") or {}
             home_team_id = to_int(home_team.get("home_team_id"))
             away_team_id = to_int(away_team.get("away_team_id"))
+            stadium_name = nested_name(match.get("stadium"))
+            if home_team_id is not None and stadium_name:
+                team_stadium_counts[home_team_id][stadium_name.strip()] += 1
+            if stadium_name:
+                for team_id in (home_team_id, away_team_id):
+                    if team_id is not None:
+                        team_any_stadium_counts[team_id][stadium_name.strip()] += 1
 
             upsert_team(
                 teams,
                 {
                     "team_id": home_team_id,
                     "team_name": home_team.get("home_team_name"),
-                    "country": nested_name(home_team.get("home_team_country")),
+                    "country": nested_name(home_team.get("country")),
                 },
             )
             upsert_team(
@@ -421,7 +424,7 @@ def main() -> None:
                 {
                     "team_id": away_team_id,
                     "team_name": away_team.get("away_team_name"),
-                    "country": nested_name(away_team.get("away_team_country")),
+                    "country": nested_name(away_team.get("country")),
                 },
             )
 
@@ -464,10 +467,8 @@ def main() -> None:
                         {
                             "player_id": player_id,
                             "player_name": player.get("player_name"),
-                            "birth_date": player.get("birth_date"),
                             "nationality": nested_name(player.get("country")),
                             "position": extract_position(player),
-                            "preferred_foot": None,
                             "team_id": lineup_team_id,
                         },
                     )
@@ -516,6 +517,12 @@ def main() -> None:
         if stop_processing:
             break
 
+    for team_id, team in teams.items():
+        if team_stadium_counts.get(team_id):
+            team["stadium"] = team_stadium_counts[team_id].most_common(1)[0][0]
+        elif team_any_stadium_counts.get(team_id):
+            team["stadium"] = team_any_stadium_counts[team_id].most_common(1)[0][0]
+
     competition_columns = [
         "competition_id",
         "competition_name",
@@ -526,9 +533,7 @@ def main() -> None:
         "team_id",
         "team_name",
         "country",
-        "city",
         "stadium",
-        "founded_year",
     ]
     match_columns = [
         "match_id",
@@ -543,10 +548,8 @@ def main() -> None:
     player_columns = [
         "player_id",
         "player_name",
-        "birth_date",
         "nationality",
         "position",
-        "preferred_foot",
         "team_id",
     ]
     stats_columns = [
@@ -574,6 +577,9 @@ def main() -> None:
     team_df = clean_dataframe(
         list(teams.values()), team_columns, ["team_id"], ["team_id"]
     ).sort_values("team_id")
+    # country is mandatory in the SQL schema. Only use Unknown after every
+    # match and lineup has had a chance to provide the real country.
+    team_df["country"] = team_df["country"].fillna("Unknown")
     match_df = clean_dataframe(
         list(matches.values()),
         match_columns,

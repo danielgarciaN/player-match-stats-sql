@@ -17,18 +17,12 @@ CREATE TABLE IF NOT EXISTS team (
     team_id INT NOT NULL,
     team_name VARCHAR(150) NOT NULL,
     country VARCHAR(100) NOT NULL,
-    city VARCHAR(100),
     stadium VARCHAR(150),
-    founded_year INT,
 
     CONSTRAINT pk_team PRIMARY KEY (team_id),
 
     -- Evita duplicar el mismo equipo dentro del mismo país.
-    CONSTRAINT uq_team_name_country UNIQUE (team_name, country),
-
-    -- Control básico para evitar años imposibles.
-    CONSTRAINT chk_team_founded_year
-        CHECK (founded_year IS NULL OR founded_year BETWEEN 1800 AND 2100)
+    CONSTRAINT uq_team_name_country UNIQUE (team_name, country)
 );
 
 
@@ -103,17 +97,14 @@ CREATE TABLE IF NOT EXISTS football_match (
 /*
 TABLA: Player
 Contiene la información descriptiva de cada jugador.
-Incluyo team_id aquí porque quiero analizar la edad y fecha
-de nacimiento de los jugadores por equipo.
+Incluyo team_id para relacionar cada jugador con su equipo.
 */
 
 CREATE TABLE IF NOT EXISTS player (
     player_id INT NOT NULL,
     player_name VARCHAR(150) NOT NULL,
-    birth_date DATE,
     nationality VARCHAR(100),
     position VARCHAR(50),
-    preferred_foot VARCHAR(20),
     team_id INT,
 
     CONSTRAINT pk_player PRIMARY KEY (player_id),
@@ -123,13 +114,6 @@ CREATE TABLE IF NOT EXISTS player (
         CHECK (
             position IS NULL
             OR position IN ('Goalkeeper', 'Defender', 'Midfielder', 'Forward')
-        ),
-
-    -- También limito el pie preferido a valores controlados.
-    CONSTRAINT chk_player_preferred_foot
-        CHECK (
-            preferred_foot IS NULL
-            OR preferred_foot IN ('Left', 'Right', 'Both')
         ),
 
     -- Cada jugador puede estar asociado a un equipo.
@@ -212,37 +196,6 @@ en el análisis exploratorio.
 CREATE INDEX idx_player_match_stats_player_match
 ON player_match_stats(player_id, match_id);
 
--- Lo usaré para análisis relacionados con edad o fecha de nacimiento.
-CREATE INDEX idx_player_birth_date
-ON player(birth_date);
-
-
-/*
-FUNCIÓN: fn_age_group
-Clasifica a los jugadores por grupo de edad.
-La usaré después en vistas y consultas analíticas.
-*/
-
-DROP FUNCTION IF EXISTS fn_age_group;
-
-DELIMITER $$
-
-CREATE FUNCTION fn_age_group(birth_date DATE)
-RETURNS VARCHAR(20)
-NOT DETERMINISTIC
-NO SQL
-BEGIN
-    RETURN CASE
-        WHEN birth_date IS NULL THEN 'Unknown'
-        WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) < 23 THEN 'Young'
-        WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) BETWEEN 23 AND 29 THEN 'Prime'
-        ELSE 'Veteran'
-    END;
-END$$
-
-DELIMITER ;
-
-
 /*
 VISTA: vw_player_performance_summary
 Resume el rendimiento acumulado por jugador.
@@ -268,38 +221,9 @@ GROUP BY
 
 
 /*
-VISTA: vw_team_age_profile
-Resume el perfil de edad de cada equipo.
-Esta vista está pensada para analizar si la edad o el mes de
-nacimiento de los jugadores puede influir en el rendimiento.
-*/
-
-CREATE OR REPLACE VIEW vw_team_age_profile AS
-SELECT
-    t.team_id,
-    t.team_name,
-    COUNT(p.player_id) AS num_players,
-    ROUND(AVG(TIMESTAMPDIFF(YEAR, p.birth_date, CURDATE())), 2) AS edad_media,
-
-    SUM(CASE WHEN fn_age_group(p.birth_date) = 'Young' THEN 1 ELSE 0 END)
-        AS young_players,
-
-    SUM(CASE WHEN fn_age_group(p.birth_date) = 'Prime' THEN 1 ELSE 0 END)
-        AS prime_players,
-
-    SUM(CASE WHEN fn_age_group(p.birth_date) = 'Veteran' THEN 1 ELSE 0 END)
-        AS veteran_players
-
-FROM team t
-LEFT JOIN player p
-    ON t.team_id = p.team_id
-GROUP BY
-    t.team_id,
-    t.team_name;
-
-
-/*
 Fin del schema.
 El orden de creación es importante: primero las dimensiones,
 luego la tabla de hechos, y al final índices, función y vistas.
 */
+
+SHOW TABLES;

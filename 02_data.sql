@@ -19,21 +19,6 @@ para respetar las claves foráneas.
 
 START TRANSACTION;
 
--- Normalizo nacionalidades nulas para facilitar agrupaciones posteriores.
-UPDATE player
-SET nationality = 'Unknown'
-WHERE nationality IS NULL OR TRIM(nationality) = '';
-
--- Normalizo posiciones nulas.
-UPDATE player
-SET position = 'Unknown'
-WHERE position IS NULL OR TRIM(position) = '';
-
--- Normalizo pie preferido nulo.
-UPDATE player
-SET preferred_foot = 'Unknown'
-WHERE preferred_foot IS NULL OR TRIM(preferred_foot) = '';
-
 -- Elimino registros de hechos sin minutos ni rating porque no aportan análisis real.
 DELETE FROM player_match_stats
 WHERE minutes_played = 0

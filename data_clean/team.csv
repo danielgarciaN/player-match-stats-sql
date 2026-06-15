@@ -1,355 +1,355 @@
-team_id,team_name,country,city,stadium,founded_year
-1,Arsenal,Unknown,,,
-22,Leicester City,Unknown,,,
-23,Watford,Unknown,,,
-24,Liverpool,Unknown,,,
-25,Southampton,Unknown,,,
-26,Swansea City,Unknown,,,
-27,West Bromwich Albion,Unknown,,,
-28,AFC Bournemouth,Unknown,,,
-29,Everton,Unknown,,,
-30,Stoke City,Unknown,,,
-31,Crystal Palace,Unknown,,,
-33,Chelsea,Unknown,,,
-36,Manchester City,Unknown,,,
-37,Newcastle United,Unknown,,,
-38,Tottenham Hotspur,Unknown,,,
-39,Manchester United,Unknown,,,
-40,West Ham United,Unknown,,,
-41,Sunderland,Unknown,,,
-46,Wolverhampton Wanderers,Unknown,,,
-47,Middlesbrough,Unknown,,,
-54,Birmingham City,Unknown,,,
-55,Fulham,Unknown,,,
-56,Norwich City,Unknown,,,
-59,Aston Villa,Unknown,,,
-75,Charlton Athletic,Unknown,,,
-98,Blackburn Rovers,Unknown,,,
-101,Leeds United,Unknown,,,
-105,Portsmouth,Unknown,,,
-129,AS Monaco,Unknown,,,
-130,Toulouse,Unknown,,,
-131,Paris Saint-Germain,Unknown,,,
-133,Troyes,Unknown,,,
-134,Rennes,Unknown,,,
-135,Saint-Étienne,Unknown,,,
-136,OGC Nice,Unknown,,,
-137,Lyon,Unknown,,,
-138,Strasbourg,Unknown,,,
-139,Montpellier,Unknown,,,
-140,Stade Malherbe Caen,Unknown,,,
-141,Metz,Unknown,,,
-142,Guingamp,Unknown,,,
-143,Lille,Unknown,,,
-144,Nantes,Unknown,,,
-145,Angers,Unknown,,,
-146,Bordeaux,Unknown,,,
-147,Olympique de Marseille,Unknown,,,
-152,Clermont Foot,Unknown,,,
-153,Stade Brestois,Unknown,,,
-156,Stade de Reims,Unknown,,,
-158,AC Ajaccio,Unknown,,,
-160,Gazélec Ajaccio,Unknown,,,
-165,Lorient,Unknown,,,
-167,Auxerre,Unknown,,,
-168,Lens,Unknown,,,
-169,Bayern Munich,Unknown,,,
-171,Hamburger SV,Unknown,,,
-172,Augsburg,Unknown,,,
-173,Hertha Berlin,Unknown,,,
-174,VfB Stuttgart,Unknown,,,
-175,Hoffenheim,Unknown,,,
-176,Werder Bremen,Unknown,,,
-177,FSV Mainz 05,Unknown,,,
-178,Hannover 96,Unknown,,,
-179,Wolfsburg,Unknown,,,
-180,Borussia Dortmund,Unknown,,,
-181,Schalke 04,Unknown,,,
-182,RB Leipzig,Unknown,,,
-183,Freiburg,Unknown,,,
-184,Eintracht Frankfurt,Unknown,,,
-185,Borussia Mönchengladbach,Unknown,,,
-186,FC Köln,Unknown,,,
-189,Ingolstadt,Unknown,,,
-190,Union Berlin,Unknown,,,
-201,FC Heidenheim,Unknown,,,
-205,Leganés,Unknown,,,
-206,Deportivo Alavés,Unknown,,,
-207,Valencia,Unknown,,,
-208,Las Palmas,Unknown,,,
-209,Celta Vigo,Unknown,,,
-210,Real Sociedad,Unknown,,,
-211,Girona,Unknown,,,
-212,Atlético Madrid,Unknown,,,
-213,Sevilla,Unknown,,,
-214,Espanyol,Unknown,,,
-215,Athletic Club,Unknown,,,
-216,Getafe,Unknown,,,
-217,Barcelona,Unknown,,,
-218,Real Betis,Unknown,,,
-219,RC Deportivo La Coruña,Unknown,,,
-220,Real Madrid,Unknown,,,
-221,Levante UD,Unknown,,,
-222,Villarreal,Unknown,,,
-223,Málaga,Unknown,,,
-224,Juventus,Unknown,,,
-226,Hellas Verona,Unknown,,,
-227,Napoli,Unknown,,,
-228,Atalanta,Unknown,,,
-229,AS Roma,Unknown,,,
-230,Udinese,Unknown,,,
-231,Chievo,Unknown,,,
-232,Sassuolo,Unknown,,,
-233,Genoa,Unknown,,,
-234,Sampdoria,Unknown,,,
-236,Lazio,Unknown,,,
-238,Inter Milan,Unknown,,,
-239,Fiorentina,Unknown,,,
-240,Bologna,Unknown,,,
-241,Torino,Unknown,,,
-243,AC Milan,Unknown,,,
-256,FC Porto,Unknown,,,
-290,Empoli,Unknown,,,
-291,Frosinone,Unknown,,,
-322,Eibar,Unknown,,,
-328,Bolton Wanderers,Unknown,,,
-360,Rayo Vallecano,Unknown,,,
-373,Córdoba CF,Unknown,,,
-387,New York Red Bulls,Unknown,,,
-395,Real Zaragoza,Unknown,,,
-403,Almería,Unknown,,,
-422,Osasuna,Unknown,,,
-444,CD Numancia de Soria,Unknown,,,
-488,Seattle Sounders,Unknown,,,
-489,Cincinnati,Unknown,,,
-552,Cádiz,Unknown,,,
-575,Toronto FC,Unknown,,,
-608,Albacete,Unknown,,,
-627,Tenerife,Unknown,,,
-746,Manchester City WFC,Unknown,,,
-749,Tottenham Hotspur Women,Unknown,,,
-759,Washington Spirit,Unknown,,,
-760,Seattle Reign,Unknown,,,
-761,Chicago Red Stars,Unknown,,,
-762,Houston Dash,Unknown,,,
-763,NJ/NY Gotham FC,Unknown,,,
-764,Orlando Pride,Unknown,,,
-765,Portland Thorns,Unknown,,,
-766,North Carolina Courage,Unknown,,,
-767,Utah Royals,Unknown,,,
-768,England,Unknown,,,
-769,Colombia,Unknown,,,
-770,Germany,Unknown,,,
-771,France,Unknown,,,
-772,Spain,Unknown,,,
-773,Switzerland,Unknown,,,
-774,Egypt,Unknown,,,
-775,Nigeria,Unknown,,,
-776,Denmark,Unknown,,,
-777,Tunisia,Unknown,,,
-778,Japan,Unknown,,,
-779,Argentina,Unknown,,,
-780,Portugal,Unknown,,,
-781,Brazil,Unknown,,,
-782,Belgium,Unknown,,,
-783,Uruguay,Unknown,,,
-784,Peru,Unknown,,,
-785,Croatia,Unknown,,,
-786,Serbia,Unknown,,,
-787,Senegal,Unknown,,,
-788,Morocco,Unknown,,,
-789,Poland,Unknown,,,
-790,Sweden,Unknown,,,
-791,South Korea,Unknown,,,
-792,Australia,Unknown,,,
-793,Iceland,Unknown,,,
-794,Mexico,Unknown,,,
-795,Costa Rica,Unknown,,,
-796,Russia,Unknown,,,
-797,Iran,Unknown,,,
-798,Panama,Unknown,,,
-799,Saudi Arabia,Unknown,,,
-806,Ajax,Unknown,,,
-851,Netherlands Women's,Unknown,,,
-852,Norway Women's,Unknown,,,
-853,Denmark Women's,Unknown,,,
-854,Belgium Women's,Unknown,,,
-855,Italy Women's,Unknown,,,
-857,Germany Women's,Unknown,,,
-858,Sweden Women's,Unknown,,,
-859,Austria Women's,Unknown,,,
-860,Switzerland Women's,Unknown,,,
-861,France Women's,Unknown,,,
-862,Iceland Women's,Unknown,,,
-863,Spain Women's,Unknown,,,
-864,Portugal Women's,Unknown,,,
-865,England Women's,Unknown,,,
-866,Scotland W,Unknown,,,
-868,Bochum,Unknown,,,
-872,Darmstadt 98,Unknown,,,
-901,Real Valladolid,Unknown,,,
-902,Huesca,Unknown,,,
-904,Bayer Leverkusen,Unknown,,,
-905,Romania,Unknown,,,
-906,Albania,Unknown,,,
-907,Wales,Unknown,,,
-908,Slovakia,Unknown,,,
-909,Turkey,Unknown,,,
-911,Ukraine,Unknown,,,
-912,Czech Republic,Unknown,,,
-914,Italy,Unknown,,,
-915,Austria,Unknown,,,
-916,Hungary,Unknown,,,
-919,LAFC,Unknown,,,
-920,WNT Finland,Unknown,,,
-924,Duisburg WFC,Unknown,,,
-929,VfL Wolfsburg WFC,Unknown,,,
-937,Barcelona WFC,Unknown,,,
-941,Netherlands,Unknown,,,
-942,Scotland,Unknown,,,
-944,Slovenia,Unknown,,,
-952,Panathinaikos,Unknown,,,
-965,Brighton & Hove Albion WFC,Unknown,,,
-966,Liverpool WFC,Unknown,,,
-967,Everton LFC,Unknown,,,
-968,Arsenal WFC,Unknown,,,
-969,Birmingham City WFC,Unknown,,,
-970,Yeovil Town LFC,Unknown,,,
-971,Chelsea FCW,Unknown,,,
-972,West Ham United LFC,Unknown,,,
-973,Bristol City WFC,Unknown,,,
-974,Reading WFC,Unknown,,,
-1036,Gimnàstic Tarragona,Unknown,,,
-1041,Sporting Gijón,Unknown,,,
-1042,Elche,Unknown,,,
-1043,Mallorca,Unknown,,,
-1049,Granada,Unknown,,,
-1069,Bayern München W,Unknown,,,
-1076,Juventus W,Unknown,,,
-1086,Fiorentina W,Unknown,,,
-1105,Atletico Madrid W,Unknown,,,
-1106,Philippines Women's,Unknown,,,
-1107,Thailand W,Unknown,,,
-1203,Brazil Women's,Unknown,,,
-1204,Argentina Women's,Unknown,,,
-1205,Australia Women's,Unknown,,,
-1206,Canada Women's,Unknown,,,
-1207,China PR Women's,Unknown,,,
-1208,Cameroon W,Unknown,,,
-1209,Chile Women's,Unknown,,,
-1210,Japan Women's,Unknown,,,
-1211,Korea Republic Women's,Unknown,,,
-1212,Jamaica Women's,Unknown,,,
-1213,Nigeria Women's,Unknown,,,
-1214,United States Women's,Unknown,,,
-1215,New Zealand Women's,Unknown,,,
-1216,South Africa Women's,Unknown,,,
-1217,Racing Santander,Unknown,,,
-1218,Hércules,Unknown,,,
-1219,Xerez,Unknown,,,
-1220,Recreativo Huelva,Unknown,,,
-1230,Real Murcia CF,Unknown,,,
-1324,River Plate,Unknown,,,
-1328,Boca Juniors,Unknown,,,
-1475,Manchester United W,Unknown,,,
-1683,Carpi,Unknown,,,
-1832,Costa Rica Women's,Unknown,,,
-1833,Canada,Unknown,,,
-1835,Finland,Unknown,,,
-1839,United States,Unknown,,,
-1938,Nashville SC,Unknown,,,
-1975,Inter Miami,Unknown,,,
-2021,Jamshedpur,Unknown,,,
-2138,Georgia,Unknown,,,
-2256,Palermo,Unknown,,,
-2305,Jamaica,Unknown,,,
-2355,Haiti Women's,Unknown,,,
-2358,North Macedonia,Unknown,,,
-2391,Morocco Women's,Unknown,,,
-2456,Wales W,Unknown,,,
-2457,Northern Ireland W,Unknown,,,
-2647,Aston Villa W,Unknown,,,
-2652,Leicester City WFC,Unknown,,,
-2721,German DR,Unknown,,,
-2722,Cameroon,Unknown,,,
-2735,NY Cosmos,Unknown,,,
-2736,Bastia,Unknown,,,
-3144,FC Internazionale Milano W,Unknown,,,
-3150,AC Milan W,Unknown,,,
-3152,AS Roma W,Unknown,,,
-3154,Sassuolo W,Unknown,,,
-3155,Napoli W,Unknown,,,
-3164,SGS Essen 19/68,Unknown,,,
-3165,SC Freiburg,Unknown,,,
-3166,TSV Bayer 04 Leverkusen,Unknown,,,
-3168,SV Werder Bremen,Unknown,,,
-3169,Hoffenheim W,Unknown,,,
-3170,Eintracht Frankfurt W,Unknown,,,
-3269,Costa Adeje Tenerife,Unknown,,,
-3270,Athletic Club Bilbao,Unknown,,,
-3272,Real Sociedad de Fútbol,Unknown,,,
-3274,Levante UD Femenino,Unknown,,,
-3275,SD Eibar,Unknown,,,
-3277,Valencia CF,Unknown,,,
-3278,Madrid CFF,Unknown,,,
-3279,Real Betis Balompié,Unknown,,,
-3280,CD Sporting de Huelva,Unknown,,,
-3281,Sevilla FC,Unknown,,,
-3282,Real Madrid CF W,Unknown,,,
-3374,Côte d'Ivoire,Unknown,,,
-3562,Chile,Unknown,,,
-3563,Venezuela,Unknown,,,
-3564,Bolivia,Unknown,,,
-3565,Ecuador,Unknown,,,
-3566,Qatar,Unknown,,,
-3567,Paraguay,Unknown,,,
-4881,Congo DR,Unknown,,,
-4885,Ghana,Unknown,,,
-4892,Guinea,Unknown,,,
-4894,Guinea-Bissau,Unknown,,,
-4898,Algeria,Unknown,,,
-4901,Angola,Unknown,,,
-4921,Burkina Faso,Unknown,,,
-4924,Cape Verde Islands,Unknown,,,
-4930,Mali,Unknown,,,
-4932,Mauritania,Unknown,,,
-4934,Gambia,Unknown,,,
-4953,Tanzania,Unknown,,,
-4963,Zambia,Unknown,,,
-4976,South Africa,Unknown,,,
-4978,Mozambique,Unknown,,,
-4980,Namibia,Unknown,,,
-4992,Equatorial Guinea,Unknown,,,
-5105,Racing Louisville FC,Unknown,,,
-5106,KC Current,Unknown,,,
-6045,Zambia W,Unknown,,,
-6602,Köln,Unknown,,,
-6604,Villarreal,Unknown,,,
-6755,Pomigliano,Unknown,,,
-6757,Sampdoria W,Unknown,,,
-7282,Mohun Bagan Super Giant,Unknown,,,
-7283,Kerala Blasters,Unknown,,,
-7284,Bengaluru,Unknown,,,
-7285,NorthEast United,Unknown,,,
-7286,East Bengal,Unknown,,,
-7287,Mumbai City,Unknown,,,
-7288,Goa,Unknown,,,
-7289,SC Delhi,Unknown,,,
-7290,Chennaiyin,Unknown,,,
-7291,Odisha,Unknown,,,
-8070,Charlotte,Unknown,,,
-9100,Angel City,Unknown,,,
-9101,San Diego Wave,Unknown,,,
-9763,Argentina U20,Unknown,,,
-11558,Como W,Unknown,,,
-11864,FC Levante Badalona,Unknown,,,
-16768,Republic of Ireland Women's,Unknown,,,
-16769,Vietnam Women's,Unknown,,,
-16802,Colombia Women's,Unknown,,,
-16803,Panama Women's,Unknown,,,
-17403,Soviet Union U20,Unknown,,,
-17469,Czechoslovakia,Unknown,,,
-18938,Granada W,Unknown,,,
-19106,Nürnberg W,Unknown,,,
-19107,RB Leipzig W,Unknown,,,
-29167,Poland Women's,Unknown,,,
+﻿team_id,team_name,country,stadium
+1,Arsenal,England,Emirates Stadium
+22,Leicester City,England,King Power Stadium
+23,Watford,England,Vicarage Road
+24,Liverpool,England,Anfield
+25,Southampton,England,St. Mary's Stadium
+26,Swansea City,Wales,Swansea.com Stadium
+27,West Bromwich Albion,England,The Hawthorns
+28,AFC Bournemouth,England,Vitality Stadium
+29,Everton,England,Goodison Park
+30,Stoke City,England,bet365 Stadium
+31,Crystal Palace,England,Selhurst Park
+33,Chelsea,England,Stamford Bridge
+36,Manchester City,England,Etihad Stadium
+37,Newcastle United,England,St. James' Park
+38,Tottenham Hotspur,England,White Hart Lane
+39,Manchester United,England,Old Trafford
+40,West Ham United,England,Boleyn Ground
+41,Sunderland,England,Stadium of Light
+46,Wolverhampton Wanderers,England,Molineux Stadium
+47,Middlesbrough,England,Riverside Stadium
+54,Birmingham City,England,St Andrew's @ Knighthead Park
+55,Fulham,England,MATRADE Loftus Road
+56,Norwich City,England,Carrow Road
+59,Aston Villa,England,Villa Park
+75,Charlton Athletic,England,The Valley
+98,Blackburn Rovers,England,Ewood Park
+101,Leeds United,England,Elland Road
+105,Portsmouth,England,Arsenal Stadium
+129,AS Monaco,Monaco,Stade Louis II
+130,Toulouse,France,Stadium de Toulouse
+131,Paris Saint-Germain,France,Parc des Princes
+133,Troyes,France,Stade de l''Aube
+134,Rennes,France,Roazhon Park
+135,Saint-Etienne,France,Stade Geoffroy-Guichard
+136,OGC Nice,France,Allianz Riviera
+137,Lyon,France,Groupama Stadium
+138,Strasbourg,France,Stade de la Meinau
+139,Montpellier,France,Stade de la Mosson
+140,Stade Malherbe Caen,France,Stade Michel d''Ornano
+141,Metz,France,Parc des Princes
+142,Guingamp,France,Stade du Roudourou
+143,Lille,France,Decathlon Arena  Stade Pierre-Mauroy
+144,Nantes,France,Stade de la Beaujoire - Louis Fonteneau
+145,Angers,France,Stade Raymond-Kopa
+146,Bordeaux,France,Stade Matmut Atlantique
+147,Olympique de Marseille,France,Orange Velodrome
+152,Clermont Foot,France,Stade Gabriel Montpied
+153,Stade Brestois,France,Stade Francis-Le Ble
+156,Stade de Reims,France,Stade Auguste-Delaune II
+158,AC Ajaccio,France,Stade Michel-Moretti
+160,Gazelec Ajaccio,France,Stade Ange Casanova (Ajaccio)
+165,Lorient,France,Stade Yves Allainmat - du Moustoir
+167,Auxerre,France,Stade de l''Abbe Deschamps
+168,Lens,France,Stade Bollaert-Delelis
+169,Bayern Munich,Germany,Allianz Arena
+171,Hamburger SV,Germany,Volksparkstadion
+172,Augsburg,Germany,WWK Arena
+173,Hertha Berlin,Germany,Olympiastadion Berlin
+174,VfB Stuttgart,Germany,MHPArena
+175,Hoffenheim,Germany,PreZero Arena
+176,Werder Bremen,Germany,Wohninvest Weserstadion
+177,FSV Mainz 05,Germany,Mewa Arena
+178,Hannover 96,Germany,Heinz von Heiden-Arena
+179,Wolfsburg,Germany,Volkswagen Arena
+180,Borussia Dortmund,Germany,Signal-Iduna-Park
+181,Schalke 04,Germany,VELTINS-Arena
+182,RB Leipzig,Germany,Red Bull Arena
+183,Freiburg,Germany,Europa-Park Stadion
+184,Eintracht Frankfurt,Germany,Deutsche Bank Park
+185,Borussia Monchengladbach,Germany,Stadion im BORUSSIA-PARK
+186,FC Koln,Germany,RheinEnergieStadion
+189,Ingolstadt,Germany,Audi-Sportpark
+190,Union Berlin,Germany,Stadion An der Alten Forsterei
+201,FC Heidenheim,Germany,Voith-Arena
+205,Leganes,Spain,Estadio Municipal de Butarque
+206,Deportivo Alaves,Spain,Estadio de Mendizorroza
+207,Valencia,Spain,Estadio de Mestalla
+208,Las Palmas,Spain,Estadio de Gran Canaria
+209,Celta Vigo,Spain,Abanca-Balaidos
+210,Real Sociedad,Spain,Reale Arena
+211,Girona,Spain,Estadi Municipal de Montilivi
+212,Atletico Madrid,Spain,Estadio Vicente Calderon
+213,Sevilla,Spain,Estadio Ramon Sanchez Pizjuan
+214,Espanyol,Spain,Stage Front Stadium
+215,Athletic Club,Spain,San Mames Barria
+216,Getafe,Spain,Coliseum Alfonso Perez
+217,Barcelona,Spain,Spotify Camp Nou
+218,Real Betis,Spain,Estadio Benito Villamarin
+219,RC Deportivo La Coruna,Spain,Estadio Abanca-Riazor
+220,Real Madrid,Spain,Bernabeu
+221,Levante UD,Spain,Estadio Ciudad de Valencia
+222,Villarreal,Spain,Estadio de la Ceramica
+223,Malaga,Spain,Estadio La Rosaleda
+224,Juventus,Italy,Allianz Stadium
+226,Hellas Verona,Italy,Stadio Marc'Antonio Bentegodi
+227,Napoli,Italy,Stadio Diego Armando Maradona
+228,Atalanta,Italy,New Balance Arena
+229,AS Roma,Italy,Estadio Olimpico
+230,Udinese,Italy,Stadio Friuli
+231,Chievo,Italy,Stadio Marc'Antonio Bentegodi
+232,Sassuolo,Italy,MAPEI Stadium - Citta del Tricolore
+233,Genoa,Italy,Stadio Comunale Luigi Ferraris
+234,Sampdoria,Italy,Stadio Comunale Luigi Ferraris
+236,Lazio,Italy,Estadio Olimpico
+238,Inter Milan,Italy,Stadio Giuseppe Meazza
+239,Fiorentina,Italy,Stadio Artemio Franchi
+240,Bologna,Italy,Stadio Renato Dall''Ara
+241,Torino,Italy,Stadio Olimpico Grande Torino
+243,AC Milan,Italy,Stadio Giuseppe Meazza
+256,FC Porto,Portugal,VELTINS-Arena
+290,Empoli,Italy,Stadio Carlo Castellani
+291,Frosinone,Italy,Stadio Comunale Matusa
+322,Eibar,Spain,Estadio Municipal de Ipurua
+328,Bolton Wanderers,England,Toughsheet Community Stadium
+360,Rayo Vallecano,Spain,Estadio de Vallecas
+373,Cordoba CF,Spain,Estadio Nuevo Arcangel
+387,New York Red Bulls,United States of America,Sports Illustrated Stadium
+395,Real Zaragoza,Spain,Estadio de la Romareda
+403,Almeria,Spain,Power Horse Stadium  Estadio de los Juegos Mediterraneos
+422,Osasuna,Spain,Estadio El Sadar
+444,CD Numancia de Soria,Spain,Los Pajaritos
+488,Seattle Sounders,United States of America,Providence Park
+489,Cincinnati,United States of America,Chase Stadium
+552,Cadiz,Spain,Estadio Nuevo Mirandilla
+575,Toronto FC,Canada,Chase Stadium
+608,Albacete,Spain,Estadio Carlos Belmonte
+627,Tenerife,Spain,Estadio Heliodoro Rodriguez Lopez
+746,Manchester City WFC,England,Joie Stadium
+749,Tottenham Hotspur Women,England,The Hive Stadium
+759,Washington Spirit,United States of America,Audi Field
+760,Seattle Reign,United States of America,Lumen Field
+761,Chicago Red Stars,United States of America,SeatGeek Stadium
+762,Houston Dash,United States of America,Shell Energy Stadium
+763,NJ/NY Gotham FC,United States of America,Sports Illustrated Stadium
+764,Orlando Pride,United States of America,Inter&Co Stadium
+765,Portland Thorns,United States of America,Providence Park
+766,North Carolina Courage,United States of America,WakeMed Soccer Park
+767,Utah Royals,United States of America,America First Field
+768,England,England,Wembley Stadium
+769,Colombia,Colombia,State Farm Stadium
+770,Germany,Germany,Allianz Arena
+771,France,France,Ak Bars Arena
+772,Spain,Spain,Olympiastadion Berlin
+773,Switzerland,Switzerland,Al Janoub Stadium
+774,Egypt,Egypt,Stade Felix Houphouet-Boigny
+775,Nigeria,Nigeria,Stade Olympique Alassane Ouattara
+776,Denmark,Denmark,Parken
+777,Tunisia,Tunisia,Stade Amadou Gon Coulibaly
+778,Japan,Japan,Sheikh Khalifa International Stadium
+779,Argentina,Argentina,Lusail Stadium
+780,Portugal,Portugal,Lusail Stadium
+781,Brazil,Brazil,Estadio Jalisco
+782,Belgium,Belgium,Saint-Petersburg Stadium ( Gazprom Arena )
+783,Uruguay,Uruguay,MetLife Stadium
+784,Peru,Peru,AT&T Stadium
+785,Croatia,Croatia,Sheikh Khalifa International Stadium
+786,Serbia,Serbia,Stadium 974
+787,Senegal,Senegal,Stade Charles Konan Banny de Yamoussoukro
+788,Morocco,Morocco,Stade Laurent Pokou
+789,Poland,Poland,Education City Stadium
+790,Sweden,Sweden,Saint-Petersburg Stadium ( Gazprom Arena )
+791,South Korea,Korea (South),Education City Stadium
+792,Australia,Australia,Al Janoub Stadium
+793,Iceland,Iceland,Rostov Arena
+794,Mexico,Mexico,NRG Stadium
+795,Costa Rica,Costa Rica,Q2 Stadium
+796,Russia,Russia,Saint-Petersburg Stadium ( Gazprom Arena )
+797,Iran,"Iran, Islamic Republic of",Al Thumama Stadium
+798,Panama,Panama,Mercedes-Benz Stadium
+799,Saudi Arabia,Saudi Arabia,Lusail Stadium
+806,Ajax,Netherlands,Wembley Stadium
+851,Netherlands Women's,Netherlands,Bramall Lane
+852,Norway Women's,Norway,St. Mary's Stadium
+853,Denmark Women's,Denmark,Gtech Community Stadium
+854,Belgium Women's,Belgium,Joie Stadium
+855,Italy Women's,Italy,Joie Stadium
+857,Germany Women's,Germany,Gtech Community Stadium
+858,Sweden Women's,Sweden,Leigh Sports Village Stadium
+859,Austria Women's,Austria,The American Express Community Stadium
+860,Switzerland Women's,Switzerland,Bramall Lane
+861,France Women's,France,AESSEAL New York Stadium
+862,Iceland Women's,Iceland,AESSEAL New York Stadium
+863,Spain Women's,Spain,Stadion Wankdorf
+864,Portugal Women's,Portugal,Leigh Sports Village Stadium
+865,England Women's,England,The American Express Community Stadium
+866,Scotland W,Scotland,Parc des Princes
+868,Bochum,Germany,Vonovia Ruhrstadion
+872,Darmstadt 98,Germany,Merck-Stadion am Bollenfalltor
+901,Real Valladolid,Spain,Estadio Municipal Jose Zorrilla
+902,Huesca,Spain,Estadio El Alcoraz
+904,Bayer Leverkusen,Germany,BayArena
+905,Romania,Romania,Allianz Arena
+906,Albania,Albania,Merkur Spiel-Arena
+907,Wales,Wales,Ahmad bin Ali Stadium
+908,Slovakia,Slovakia,Merkur Spiel-Arena
+909,Turkey,Turkey,Signal-Iduna-Park
+911,Ukraine,Ukraine,Arena Nationala
+912,Czech Republic,Czech Republic,Volksparkstadion
+914,Italy,Italy,Wembley Stadium
+915,Austria,Austria,Red Bull Arena
+916,Hungary,Hungary,Puskas Arena
+919,LAFC,United States of America,BMO Stadium
+920,WNT Finland,Finland,Stadium MK
+924,Duisburg WFC,Germany,Schauinsland-Reisen-Arena (Duisburg) MSV-Arena
+929,VfL Wolfsburg WFC,Germany,AOK Stadion
+937,Barcelona WFC,Spain,Estadi Johan Cruyff
+941,Netherlands,Netherlands,Signal-Iduna-Park
+942,Scotland,Scotland,RheinEnergieStadion
+944,Slovenia,Slovenia,Allianz Arena
+952,Panathinaikos,Greece,Wembley Stadium
+965,Brighton & Hove Albion WFC,England,Broadfield Stadium
+966,Liverpool WFC,England,Prenton Park
+967,Everton LFC,England,Walton Hall Park
+968,Arsenal WFC,England,Meadow Park
+969,Birmingham City WFC,England,ARMCO Arena
+970,Yeovil Town LFC,England,Clayson Stadium
+971,Chelsea FCW,England,Kingsmeadow
+972,West Ham United LFC,England,Chigwell Construction Stadium
+973,Bristol City WFC,England,Stoke Gifford Stadium
+974,Reading WFC,England,Adams Park
+1036,Gimnastic Tarragona,Spain,Nou Estadi Costa Daurada
+1041,Sporting Gijon,Spain,Estadio Municipal El Molinon
+1042,Elche,Spain,Estadio Manuel Martinez Valero
+1043,Mallorca,Spain,Visit Mallorca Estadi
+1049,Granada,Spain,Estadio Nuevo Los Carmenes
+1069,Bayern Munchen W,Germany,FC Bayern Campus Platz 1
+1076,Juventus W,Italy,Stadio Comunale Vittorio Pozzo Lamarmora
+1086,Fiorentina W,Italy,Stadio Curva Fiesole - Viola Park
+1105,Atletico Madrid W,Spain,Centro Deportivo Alcala de Henares
+1106,Philippines Women's,Philippines,Forsyth Barr
+1107,Thailand W,Thailand,Roazhon Park
+1203,Brazil Women's,Brazil,Coopers Stadium
+1204,Argentina Women's,Argentina,FMG Stadium Waikato
+1205,Australia Women's,Australia,Accor Stadium
+1206,Canada Women's,Canada,AAMI Park
+1207,China PR Women's,China,Coopers Stadium
+1208,Cameroon W,Cameroon,Stade de la Mosson
+1209,Chile Women's,Chile,Roazhon Park
+1210,Japan Women's,Japan,Wellington Regional Stadium
+1211,Korea Republic Women's,Korea (South),Coopers Stadium
+1212,Jamaica Women's,Jamaica,AAMI Park
+1213,Nigeria Women's,Nigeria,AAMI Park
+1214,United States Women's,United States of America,Wellington Regional Stadium
+1215,New Zealand Women's,New Zealand,Eden Park
+1216,South Africa Women's,South Africa,Wellington Regional Stadium
+1217,Racing Santander,Spain,Campos de Sport de El Sardinero
+1218,Hercules,Spain,Estadio Jose Rico Perez
+1219,Xerez,Spain,Estadio Municipal de Chapin
+1220,Recreativo Huelva,Spain,Estadio Nuevo Colombino
+1230,Real Murcia CF,Spain,Estadio Enrique Roca de Murcia
+1324,River Plate,Argentina,Estadio Mas Monumental
+1328,Boca Juniors,Argentina,La Bombonera
+1475,Manchester United W,England,Leigh Sports Village Stadium
+1683,Carpi,Italy,Stadio Alberto Braglia (Modena)
+1832,Costa Rica Women's,Costa Rica,FMG Stadium Waikato
+1833,Canada,Canada,Bank of America Stadium
+1835,Finland,Finland,Saint-Petersburg Stadium ( Gazprom Arena )
+1839,United States,United States of America,AT&T Stadium
+1938,Nashville SC,United States of America,Chase Stadium
+1975,Inter Miami,United States of America,Chase Stadium
+2021,Jamshedpur,India,GMC Athletic Stadium
+2138,Georgia,Georgia,Volksparkstadion
+2256,Palermo,Italy,Stadio Renzo Barbera
+2305,Jamaica,Jamaica,Q2 Stadium
+2355,Haiti Women's,Haiti,HBF Park
+2358,North Macedonia,"Macedonia, Republic of",Johan Cruijff Arena (Amsterdam)
+2391,Morocco Women's,Morocco,HBF Park
+2456,Wales W,Wales,swissporarena
+2457,Northern Ireland W,Northern Ireland,St. Mary's Stadium
+2647,Aston Villa W,England,Poundland Bescot Stadium
+2652,Leicester City WFC,England,King Power Stadium
+2721,German DR,International,Parkstadion Obenende
+2722,Cameroon,Cameroon,Stade Charles Konan Banny de Yamoussoukro
+2735,NY Cosmos,United States of America,Providence Park
+2736,Bastia,France,Stade Armand-Cesari
+3144,FC Internazionale Milano W,Italy,Stadio Giuseppe Meazza
+3150,AC Milan W,Italy,Puma House of Football - Centro P. Vismara
+3152,AS Roma W,Italy,Stadio Tre Fontane
+3154,Sassuolo W,Italy,Stadio Enzo Ricci
+3155,Napoli W,Italy,Stadio Giuseppe Piccolo
+3164,SGS Essen 19/68,Germany,Stadion an der Hafenstrasse
+3165,SC Freiburg,Germany,Dreisamstadion
+3166,TSV Bayer 04 Leverkusen,Germany,Ulrich-Haberland-Stadion
+3168,SV Werder Bremen,Germany,Weserstadion Platz 11
+3169,Hoffenheim W,Germany,Dietmar-Hopp-Stadion
+3170,Eintracht Frankfurt W,Germany,Stadion am Brentanobad
+3269,Costa Adeje Tenerife,Spain,Campo de Futbol de Adeje
+3270,Athletic Club Bilbao,Spain,Instalaciones de Lezama Campo 2
+3272,Real Sociedad de Futbol,Spain,Instalaciones de Zubieta
+3274,Levante UD Femenino,Spain,Ciudad Deportiva de Bunol - Campo 1
+3275,SD Eibar,Spain,Estadio Municipal de Ipurua
+3277,Valencia CF,Spain,Estadio Antonio Puchades
+3278,Madrid CFF,Spain,Estadio Fernando Torres
+3279,Real Betis Balompie,Spain,Ciudad Deportiva Luis de Sol
+3280,CD Sporting de Huelva,Spain,Ciudad Deportiva Decano del Futbol Espanol
+3281,Sevilla FC,Spain,Estadio Jesus Navas
+3282,Real Madrid CF W,Spain,Estadio Alfredo Di Stefano
+3374,Cote d'Ivoire,Cote d'Ivoire,Stade Olympique Alassane Ouattara
+3562,Chile,Chile,MetLife Stadium
+3563,Venezuela,Venezuela (Bolivarian Republic),SoFi Stadium
+3564,Bolivia,Bolivia,Inter&Co Stadium
+3565,Ecuador,Ecuador,Allegiant Stadium
+3566,Qatar,Qatar,Al Thumama Stadium
+3567,Paraguay,Paraguay,Allegiant Stadium
+4881,Congo DR,"Congo, (Kinshasa)",Stade Laurent Pokou
+4885,Ghana,Ghana,Stade Felix Houphouet-Boigny
+4892,Guinea,Guinea,Stade Charles Konan Banny de Yamoussoukro
+4894,Guinea-Bissau,Guinea-Bissau,Stade Felix Houphouet-Boigny
+4898,Algeria,Algeria,Stade de Bouake
+4901,Angola,Angola,Stade Charles Konan Banny de Yamoussoukro
+4921,Burkina Faso,Burkina Faso,Stade de Bouake
+4924,Cape Verde Islands,Cape Verde,Stade Felix Houphouet-Boigny
+4930,Mali,Mali,Stade Amadou Gon Coulibaly
+4932,Mauritania,Mauritania,Stade de Bouake
+4934,Gambia,Gambia,Stade de Bouake
+4953,Tanzania,"Tanzania, United Republic of",Stade Amadou Gon Coulibaly
+4963,Zambia,Zambia,Stade Laurent Pokou
+4976,South Africa,South Africa,Stade Amadou Gon Coulibaly
+4978,Mozambique,Mozambique,Stade Olympique Alassane Ouattara
+4980,Namibia,Namibia,Stade Laurent Pokou
+4992,Equatorial Guinea,Equatorial Guinea,Stade Olympique Alassane Ouattara
+5105,Racing Louisville FC,United States of America,Lynn Family Stadium
+5106,KC Current,United States of America,Children''s Mercy Park
+6045,Zambia W,Zambia,FMG Stadium Waikato
+6602,Koln,Germany,Franz-Kremer-Stadion
+6604,Villarreal,Spain,Ciudad Deportiva del Villarreal
+6755,Pomigliano,Italy,Stadio Amerigo Liguori
+6757,Sampdoria W,Italy,Stadio La Sciorba
+7282,Mohun Bagan Super Giant,India,Pandit Jawaharlal Nehru Stadium
+7283,Kerala Blasters,India,Tilak Maidan Stadium
+7284,Bengaluru,India,GMC Athletic Stadium
+7285,NorthEast United,India,Pandit Jawaharlal Nehru Stadium
+7286,East Bengal,India,Tilak Maidan Stadium
+7287,Mumbai City,India,Pandit Jawaharlal Nehru Stadium
+7288,Goa,India,GMC Athletic Stadium
+7289,SC Delhi,India,GMC Athletic Stadium
+7290,Chennaiyin,India,Tilak Maidan Stadium
+7291,Odisha,India,Tilak Maidan Stadium
+8070,Charlotte,United States of America,Bank of America Stadium
+9100,Angel City,United States of America,BMO Stadium
+9101,San Diego Wave,United States of America,Snapdragon Stadium
+9763,Argentina U20,Argentina,Japan National Stadium (Tokyo (Tokyo))
+11558,Como W,Italy,Stadio Ferruccio
+11864,FC Levante Badalona,Spain,Camp Municipal Les Planes
+16768,Republic of Ireland Women's,Ireland,Victoria Park
+16769,Vietnam Women's,Vietnam,Forsyth Barr
+16802,Colombia Women's,Colombia,Allianz Stadium (Sydney)
+16803,Panama Women's,Panama,Allianz Stadium (Sydney)
+17403,Soviet Union U20,Russia,Japan National Stadium (Tokyo (Tokyo))
+17469,Czechoslovakia,Czech Republic,Estadio Jalisco
+18938,Granada W,Spain,Ciudad Deportiva del Granada CF
+19106,Nurnberg W,Germany,Max-Morlock-Stadion
+19107,RB Leipzig W,Germany,Trainingszentrum RB Leipzig Platz 1
+29167,Poland Women's,Poland,swissporarena

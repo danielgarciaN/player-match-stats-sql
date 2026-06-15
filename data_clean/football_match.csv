@@ -1,4 +1,4 @@
-match_id,competition_id,match_date,home_team_id,away_team_id,home_goals,away_goals,season
+﻿match_id,competition_id,match_date,home_team_id,away_team_id,home_goals,away_goals,season
 7430,49,2018-04-15,759,766,2,4,2018
 7443,49,2018-05-05,765,760,2,3,2018
 7444,49,2018-05-06,766,761,1,1,2018

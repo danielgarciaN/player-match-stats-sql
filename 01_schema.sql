@@ -186,6 +186,7 @@ CREATE TABLE IF NOT EXISTS player_match_stats (
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
+
 /*
 ÍNDICES
 Los índices ayudan a acelerar consultas que se repetirán mucho
@@ -195,6 +196,33 @@ en el análisis exploratorio.
 -- Lo usaré para consultar rápidamente el rendimiento de un jugador por partido.
 CREATE INDEX idx_player_match_stats_player_match
 ON player_match_stats(player_id, match_id);
+
+
+    
+/*
+FUNCION: fn_efficiency_level
+Clasifica el impacto ofensivo de un jugador usando contribuciones por 90 minutos.
+Así no depende tanto del número total de partidos registrados.
+*/
+
+DROP FUNCTION IF EXISTS fn_efficiency_level;
+
+DELIMITER $$
+
+CREATE FUNCTION fn_efficiency_level(contributions_per_90 DECIMAL(10,2))
+RETURNS VARCHAR(20)
+DETERMINISTIC
+NO SQL
+BEGIN
+    RETURN CASE
+        WHEN contributions_per_90 IS NULL THEN 'Unknown'
+        WHEN contributions_per_90 >= 0.80 THEN 'High efficiency'
+        WHEN contributions_per_90 >= 0.40 THEN 'Medium efficiency'
+        ELSE 'Low efficiency'
+    END;
+END$$
+
+DELIMITER ;
 
 /*
 VISTA: vw_player_performance_summary
@@ -211,6 +239,7 @@ SELECT
     SUM(f.goals) AS goles_totales,
     SUM(f.assists) AS asistencias_totales,
     SUM(f.goals + f.assists) AS contribuciones_ofensivas,
+    fn_efficiency_level(ROUND(SUM(f.goals + f.assists) / NULLIF(SUM(f.minutes_played), 0) * 90,2)) AS efficiency_level,
     ROUND(AVG(f.rating), 2) AS rating_medio
 FROM player p
 INNER JOIN player_match_stats f
@@ -219,6 +248,31 @@ GROUP BY
     p.player_id,
     p.player_name;
 
+
+/*
+VISTA: vw_team_performance_summary
+Resume el rendimiento acumulado por equipo.
+La uso para comparar equipos sin repetir agregaciones en cada consulta.
+*/
+
+CREATE OR REPLACE VIEW vw_team_performance_summary AS
+SELECT
+    t.team_id,
+    t.team_name,
+    COUNT(DISTINCT p.player_id) AS jugadores,
+    COUNT(DISTINCT f.match_id) AS partidos_con_registro,
+    SUM(f.goals) AS goles_totales,
+    SUM(f.assists) AS asistencias_totales,
+    SUM(f.goals + f.assists) AS contribuciones_ofensivas,
+    ROUND(AVG(f.rating), 2) AS rating_medio_equipo
+FROM team t
+LEFT JOIN player p
+    ON t.team_id = p.team_id
+LEFT JOIN player_match_stats f
+    ON p.player_id = f.player_id
+GROUP BY
+    t.team_id,
+    t.team_name;
 
 /*
 Fin del schema.

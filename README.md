@@ -1,103 +1,228 @@
-# Proyecto de analisis de futbol con SQL
+# Proyecto de análisis de fútbol con SQL
 
-## Descripcion
+## Descripción
 
-Este proyecto organiza y analiza datos abiertos de futbol procedentes de StatsBomb. El objetivo es construir una base de datos relacional que permita estudiar partidos, equipos, competiciones y rendimiento individual de jugadores mediante consultas SQL reproducibles.
+Este proyecto utiliza datos abiertos de StatsBomb para analizar partidos, competiciones, equipos y jugadores mediante SQL. Los datos originales se encuentran en formato JSON y han sido transformados a CSV para facilitar su carga en una base de datos relacional.
 
-El modelo sigue un enfoque cercano a un esquema en estrella. `player_match_stats` actua como tabla de hechos, con una fila por jugador y partido, mientras que `player`, `football_match`, `team` y `competition` aportan el contexto necesario para interpretar cada registro.
+La tabla principal del modelo es `player_match_stats`, donde cada fila representa el rendimiento de un jugador en un partido concreto. Las tablas `player`, `team`, `competition` y `football_match` aportan el contexto necesario para interpretar esas estadísticas.
+
+El objetivo es aplicar técnicas de modelado relacional, limpieza de datos y análisis exploratorio para extraer conclusiones relevantes a partir de datos reales de fútbol.
 
 ![Modelo relacional](model.jpg)
 
-## Estructura del proyecto
-
-- `01_schema.sql`: crea la base de datos, las tablas, restricciones, claves, indice y vista de negocio.
-- `02_data.sql`: documenta el orden de importacion de los CSV y realiza comprobaciones posteriores a la carga.
-- `03_eda.sql`: contiene diez consultas de analisis exploratorio, sin operaciones de limpieza ni creacion de objetos.
-- `data_clean/`: contiene los CSV preparados para su importacion.
-- `transform_statsbomb_to_csv.py`: transforma los archivos JSON originales en las cinco tablas CSV utilizadas por el proyecto.
-- `model.jpg`: representa el modelo relacional.
-
-## Datos utilizados
-
-Los datos se han obtenido de StatsBomb Open Data y se han transformado a un formato tabular adaptado al modelo SQL. El conjunto preparado contiene:
-
-| Archivo | Registros |
-|---|---:|
-| `team.csv` | 354 |
-| `competition.csv` | 24 |
-| `football_match.csv` | 3.961 |
-| `player.csv` | 11.794 |
-| `player_match_stats.csv` | 152.133 |
-
-Los partidos abarcan desde el 24 de junio de 1958 hasta el 27 de julio de 2025. Debido a que se trata de datos abiertos, la cobertura no es uniforme para todas las competiciones y temporadas. Por este motivo, las comparaciones deben interpretarse teniendo en cuenta el numero de partidos disponible.
+---
 
 ## Modelo de datos
 
-La granularidad de `player_match_stats` es una actuacion de un jugador en un partido. Esta decision permite agregar el rendimiento por jugador, posicion, equipo, competicion o temporada sin duplicar las metricas.
+El proyecto sigue un modelo dimensional sencillo.
 
-Relaciones principales:
+### Tabla de hechos
 
-- Un equipo puede aparecer como local o visitante en muchos partidos.
-- Una competicion contiene muchos partidos.
-- Un jugador puede estar asociado a un equipo.
-- Un jugador y un partido se relacionan mediante `player_match_stats`.
-- La combinacion de jugador y partido es unica en la tabla de hechos.
+- `player_match_stats`
 
-El esquema incorpora claves primarias y foraneas, restricciones de rango y una restriccion unica sobre `player_id` y `match_id`. Tambien incluye el indice `idx_player_match_stats_player_match`, util para consultas que buscan o agregan actuaciones por jugador y partido.
+### Dimensiones
 
-La vista `vw_player_performance_summary` resume partidos, minutos, goles, asistencias y rating medio por jugador. En `03_eda.sql` se reutiliza para comparar la produccion ofensiva y detectar jugadores situados por encima del rating medio global.
+- `player`
+- `team`
+- `competition`
+- `football_match`
 
-## Ejecucion
+La granularidad de la tabla principal es una fila por jugador y partido.
 
-El proyecto esta preparado para MySQL 8.0 o superior, ya que utiliza CTE, funciones ventana y restricciones `CHECK`.
+---
 
-1. Ejecutar `01_schema.sql`.
-2. Importar los CSV de `data_clean/` respetando este orden:
-   `team`, `competition`, `football_match`, `player` y `player_match_stats`.
-3. Ejecutar `02_data.sql` para completar y comprobar la carga.
-4. Ejecutar `03_eda.sql` para obtener los resultados analiticos.
+## Archivos principales
 
-La importacion puede realizarse desde MySQL Workbench o DBeaver. Los nombres de las columnas de cada CSV coinciden con los nombres definidos en las tablas.
+- `01_schema.sql`: creación de la base de datos, tablas, claves primarias, claves foráneas, restricciones, índice, función y vistas.
+- `02_data.sql`: validación y limpieza de los datos cargados.
+- `03_eda.sql`: consultas analíticas e insights obtenidos.
+- `data_clean/`: archivos CSV preparados para la importación.
+- `transform_statsbomb_to_csv.py`: script utilizado para transformar los JSON originales de StatsBomb a CSV.
+- `model.jpg`: diagrama entidad-relación del modelo.
 
-## Analisis exploratorio
+---
 
-Las diez consultas de `03_eda.sql` responden a las siguientes preguntas:
+## Ejecución
 
-1. Que competiciones y temporadas presentan un promedio goleador mas alto.
-2. En que competiciones existe una mayor ventaja para el equipo local.
-3. Cuales son los cinco primeros equipos de cada competicion y temporada segun sus resultados.
-4. Que jugadores producen mas goles y asistencias por cada 90 minutos.
-5. Que jugadores superan el rating medio global.
-6. Quienes lideran el rendimiento dentro de cada posicion.
-7. Que acciones caracterizan el juego de cada posicion.
-8. En que competiciones y posiciones se registran mas tarjetas.
-9. Que nacionalidades acumulan mayor representacion y volumen de minutos.
-10. Como evoluciona mensualmente el promedio de goles de cada competicion.
+El proyecto está preparado para MySQL 8.0 o superior.
 
-Estas consultas incluyen agregaciones, conversion de tipos, funciones de fecha, subqueries, `INNER JOIN`, `LEFT JOIN`, logica condicional con `CASE`, CTE encadenadas y funciones ventana con `PARTITION BY`.
+### 1. Crear la estructura
 
-## Decisiones de analisis
+Ejecutar:
 
-Para comparar jugadores se establecen minimos de partidos o minutos. De esta forma se evita situar en las primeras posiciones a futbolistas con una muestra demasiado pequena. En los rankings de equipo, cada partido se transforma en una fila para el local y otra para el visitante antes de calcular puntos, diferencia de goles y posicion.
+```sql
+01_schema.sql
+```
 
-El vinculo entre un jugador y su equipo representa la asociacion disponible en el conjunto transformado. Por tanto, no debe interpretarse necesariamente como un historial completo de traspasos. Del mismo modo, un rating resume el rendimiento registrado en la fuente, pero no sustituye el analisis detallado de las acciones realizadas durante el partido.
+### 2. Importar los CSV
 
-## Tecnicas SQL aplicadas
+Importar los archivos en el siguiente orden:
 
-- Agregaciones mediante `COUNT`, `SUM` y `AVG`.
-- Conversiones con `CAST`.
-- Funciones de fecha como `YEAR` y `DATE_FORMAT`.
-- Logica condicional mediante `CASE`.
-- Subqueries para comparar jugadores con la media global.
-- Uniones `INNER JOIN` y `LEFT JOIN`.
-- CTE simples y encadenadas.
-- Rankings y medias moviles mediante funciones ventana.
-- Reutilizacion de una vista de negocio y del indice compuesto del modelo.
+1. `team.csv`
+2. `competition.csv`
+3. `football_match.csv`
+4. `player.csv`
+5. `player_match_stats.csv`
+
+### 3. Ejecutar la limpieza
+
+```sql
+02_data.sql
+```
+
+### 4. Ejecutar el análisis
+
+```sql
+03_eda.sql
+```
+
+---
+
+## Preparación de los datos
+
+El conjunto original contiene 24 competiciones. Sin embargo, algunas de ellas disponen de muy pocos partidos registrados, lo que dificulta la obtención de conclusiones fiables.
+
+Por este motivo, en `02_data.sql` se identifican las competiciones con menos de 30 partidos y se eliminan junto con sus estadísticas asociadas. También se eliminan jugadores sin registros estadísticos y equipos que quedan sin relación con el resto de tablas.
+
+Además, el script realiza comprobaciones sobre:
+
+- Valores nulos.
+- Registros duplicados.
+- Fechas incorrectas.
+- Valores fuera de rango.
+- Integridad referencial.
+- Registros huérfanos.
+
+Toda la limpieza se realiza mediante transacciones para garantizar la consistencia de los datos.
+
+### Resultado final después de la limpieza
+
+| Tabla | Registros |
+|---------|---------:|
+| `team` | 344 |
+| `competition` | 17 |
+| `football_match` | 3897 |
+| `player` | 9508 |
+| `player_match_stats` | 143917 |
+
+La reducción de registros se debe principalmente a la eliminación de competiciones con muy pocos partidos, ya que una muestra tan pequeña podría producir conclusiones poco representativas.
+
+---
+
+## Análisis exploratorio
+
+Las consultas de `03_eda.sql` utilizan una muestra final de:
+
+- 3.897 partidos
+- 9.508 jugadores
+- 143.917 registros individuales de rendimiento
+
+A partir de estos datos se responden las siguientes preguntas:
+
+1. ¿Qué competiciones tienen un mayor promedio de goles?
+2. ¿En qué competiciones influye más jugar como local?
+3. ¿Qué equipos son más eficientes de cara a gol?
+4. ¿Qué equipos dependen más de un único jugador para generar goles y asistencias?
+5. ¿Qué jugadores podrían estar infravalorados por jugar menos minutos de los esperados?
+6. ¿Cómo cambia el rendimiento según la posición del jugador?
+7. ¿Quiénes son los mejores jugadores de cada posición según su rating?
+8. ¿Qué jugadores tienen el mejor promedio goleador?
+9. ¿Qué jugadores superan el rating medio global del dataset?
+10. ¿Cómo ha evolucionado el promedio de goles por año?
+11. ¿Qué relación existe entre la eficiencia ofensiva y el rating medio de los jugadores?
+
+Las consultas combinan agregaciones, filtros, uniones, subconsultas, funciones ventana y vistas de negocio para obtener conclusiones de forma sencilla y reproducible.
+
+---
+
+## Técnicas SQL utilizadas
+
+Durante el desarrollo del proyecto se han utilizado las siguientes técnicas:
+
+- `CREATE TABLE`
+- `PRIMARY KEY`
+- `FOREIGN KEY`
+- `CHECK`
+- `UNIQUE`
+- `INSERT`
+- `UPDATE`
+- `DELETE`
+- `CAST`
+- `COUNT`
+- `SUM`
+- `AVG`
+- `CASE`
+- `INNER JOIN`
+- `LEFT JOIN`
+- Subqueries
+- CTE (`WITH`)
+- CTE encadenadas
+- Funciones ventana (`RANK() OVER(PARTITION BY ...)`)
+- Funciones de fecha (`YEAR`, `CURDATE`)
+- Transacciones (`START TRANSACTION`, `COMMIT`, `ROLLBACK`)
+- Índices
+- Funciones SQL personalizadas
+- Vistas de negocio
+
+---
+
+## Elementos destacados del modelo
+
+### Índice
+
+Se ha creado el índice:
+
+```sql
+idx_player_match_stats_player_match
+```
+
+Su objetivo es acelerar consultas frecuentes sobre el rendimiento de jugadores por partido.
+
+### Función SQL
+
+Se ha implementado la función:
+
+```sql
+fn_efficiency_level()
+```
+
+Esta función clasifica a los jugadores según sus contribuciones ofensivas por 90 minutos en categorías de eficiencia.
+
+### Vistas
+
+Se han creado dos vistas de negocio:
+
+#### `vw_player_performance_summary`
+
+Resume el rendimiento acumulado de cada jugador.
+
+#### `vw_team_performance_summary`
+
+Resume el rendimiento agregado de cada equipo.
+
+Estas vistas simplifican varias de las consultas utilizadas en el análisis exploratorio.
+
+---
+
+## Objetivo del proyecto
+
+El objetivo principal es aplicar los conceptos aprendidos durante el módulo de SQL a un caso real basado en datos deportivos.
+
+Para ello se han desarrollado las distintas fases habituales de un proyecto de datos:
+
+1. Obtención de los datos.
+2. Transformación y carga.
+3. Diseño del modelo relacional.
+4. Validación y limpieza.
+5. Análisis exploratorio.
+6. Obtención de conclusiones mediante SQL.
+
+---
 
 ## Limitaciones
 
-El conjunto no contiene todos los partidos disputados por cada competicion y temporada. Las clasificaciones calculadas reflejan exclusivamente los encuentros disponibles en la base de datos y no siempre coinciden con las clasificaciones oficiales completas. Ademas, las estadisticas individuales dependen de la disponibilidad de eventos y alineaciones en la fuente original.
+Los datos abiertos de StatsBomb no contienen todos los partidos disputados en cada competición o temporada.
 
-## Autor
+Por tanto, los resultados obtenidos describen únicamente la muestra disponible y no deben interpretarse como clasificaciones oficiales completas.
 
-Proyecto academico realizado como practica de modelado relacional y analisis exploratorio con SQL.
+Además, algunas competiciones, equipos y jugadores cuentan con más registros que otros, por lo que ciertas conclusiones pueden verse afectadas por diferencias en el tamaño de la muestra.

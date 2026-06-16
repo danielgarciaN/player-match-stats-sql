@@ -1,34 +1,31 @@
 USE football_stats_db;
 
 -- 03_eda.sql
--- Analisis exploratorio de los partidos y del rendimiento de los jugadores.
--- Este script solo contiene consultas: no limpia datos ni crea vistas o indices.
+-- Consultas para obtener conclusiones claras sobre los datos de futbol.
 
 
--- Insight 1. Volumen y nivel goleador por competicion y temporada.
--- Permite comparar el tamano de cada muestra y su promedio de goles por partido.
+-- Insight 1. Competiciones con mayor promedio de goles.
 SELECT
     c.competition_name,
-    c.country_name,
-    m.season,
     COUNT(*) AS partidos,
     SUM(m.home_goals + m.away_goals) AS goles_totales,
-    ROUND(AVG(CAST(m.home_goals + m.away_goals AS DECIMAL(10, 2))), 2) AS goles_por_partido,
-    YEAR(MIN(m.match_date)) AS primer_ano,
-    YEAR(MAX(m.match_date)) AS ultimo_ano
+    ROUND(AVG(m.home_goals + m.away_goals), 2) AS goles_por_partido
 FROM football_match AS m
 INNER JOIN competition AS c
     ON c.competition_id = m.competition_id
 GROUP BY
     c.competition_id,
-    c.competition_name,
-    c.country_name,
-    m.season
-ORDER BY goles_por_partido DESC, partidos DESC;
+    c.competition_name
+ORDER BY goles_por_partido DESC;
+
+-- Conclusión:
+-- Las competiciones femeninas aparecen entre las más goleadoras del dataset,
+-- mientras que competiciones como la Copa América o la copa Africa presentan medias más bajas.
+-- Esto sugiere diferencias en el estilo de juego, en la producción ofensiva y en la diferencia de nivel entre los quipos
 
 
--- Insight 2. Ventaja de jugar como local por competicion.
--- Mide victorias locales, empates y visitantes, ademas de la diferencia media de goles.
+
+-- Insight 2. Influencia de jugar como local en cada competicion.
 SELECT
     c.competition_name,
     COUNT(*) AS partidos,
@@ -38,265 +35,280 @@ SELECT
     ROUND(
         100.0 * SUM(CASE WHEN m.home_goals > m.away_goals THEN 1 ELSE 0 END) / COUNT(*),
         2
-    ) AS porcentaje_victorias_locales,
-    ROUND(AVG(CAST(m.home_goals - m.away_goals AS DECIMAL(10, 2))), 2) AS diferencia_media_local
+    ) AS porcentaje_victorias_locales
 FROM football_match AS m
-INNER JOIN competition AS c
+JOIN competition AS c
     ON c.competition_id = m.competition_id
 GROUP BY c.competition_id, c.competition_name
 ORDER BY porcentaje_victorias_locales DESC;
 
+-- Conclusión:
+-- La mayoría de competiciones muestran más victorias locales que visitantes,
+-- lo que sugiere una ventaja asociada a jugar en casa. Sin embargo, la magnitud
+-- de esta ventaja varía entre competiciones.
 
--- Insight 3. Clasificacion calculada por competicion y temporada.
--- Las CTE encadenadas convierten cada partido en dos registros y calculan puntos y posicion.
-WITH match_sides AS (
-    SELECT
-        m.competition_id,
-        m.season,
-        m.home_team_id AS team_id,
-        m.home_goals AS goals_for,
-        m.away_goals AS goals_against,
-        CASE
-            WHEN m.home_goals > m.away_goals THEN 3
-            WHEN m.home_goals = m.away_goals THEN 1
-            ELSE 0
-        END AS points
-    FROM football_match AS m
 
-    UNION ALL
+-- Insight 3. Equipos mas eficientes de cara a gol
+SELECT 
+	t.team_name, 
+	COUNT(DISTINCT f.match_id) AS partido,
+	SUM(f.goals) AS goles,
+	SUM(f.shots) AS tiros,
+	ROUND(CAST(SUM(f.goals) AS DECIMAL(10,2)) / NULLIF(SUM(f.shots), 0),3) AS goles_por_tiro
+FROM player_match_stats f
+JOIN player p ON f.player_id = p.player_id 
+JOIN team t ON p.team_id = t.team_id
+GROUP BY t.team_id, t.team_name
+HAVING SUM(f.shots) >= 100
+ORDER BY goles_por_tiro DESC;
 
-    SELECT
-        m.competition_id,
-        m.season,
-        m.away_team_id AS team_id,
-        m.away_goals AS goals_for,
-        m.home_goals AS goals_against,
-        CASE
-            WHEN m.away_goals > m.home_goals THEN 3
-            WHEN m.away_goals = m.home_goals THEN 1
-            ELSE 0
-        END AS points
-    FROM football_match AS m
+-- Conclusión:
+-- Rusia presenta la mayor eficacia goleadora, aunque con una muestra más
+-- reducida de partidos y tiros. Entre los equipos con más registros destacan Arsenal,
+-- FC Barcelona, PSG, Inter de Milán y Francia, que mantienen una alta conversión de
+-- ocasiones en gol, algo esperable en equipos acostumbrados a competir en la parte
+-- alta de sus ligas. Por el contrario, equipos como Valladolid, Getafe o Huesca
+-- muestran una menor eficacia ofensiva y necesitan más disparos para marcar.
+
+
+
+
+-- Insight 4. Dependencia ofensiva de una estrella.
+WITH contribuciones_por_jugador AS(
+	SELECT
+		p.player_id,
+		p.player_name AS jugador,
+		t.team_id,
+		t.team_name AS equipo,
+		SUM(f.goals) + SUM(f.assists) as total_contribuciones
+	FROM player_match_stats f
+	JOIN player p ON f.player_id = p.player_id
+	JOIN team t ON p.team_id = t.team_id
+	GROUP BY p.player_id, p.player_name, t.team_id, t.team_name
 ),
-team_totals AS (
-    SELECT
-        competition_id,
-        season,
-        team_id,
-        COUNT(*) AS partidos,
-        SUM(goals_for) AS goles_favor,
-        SUM(goals_against) AS goles_contra,
-        SUM(goals_for - goals_against) AS diferencia_goles,
-        SUM(points) AS puntos
-    FROM match_sides
-    GROUP BY competition_id, season, team_id
+
+contribuciones_por_equipo AS (
+	SELECT 
+		team_id,
+		equipo,
+		SUM(total_contribuciones) AS total_contribuciones_equipo
+	FROM contribuciones_por_jugador
+	GROUP BY
+		team_id,
+		equipo
 ),
-ranked_teams AS (
-    SELECT
-        tt.*,
-        DENSE_RANK() OVER (
-            PARTITION BY tt.competition_id, tt.season
-            ORDER BY tt.puntos DESC, tt.diferencia_goles DESC, tt.goles_favor DESC
-        ) AS posicion
-    FROM team_totals AS tt
+
+mejores_jugadores AS (
+	SELECT 
+		cj.equipo,
+        cj.jugador,
+        cj.total_contribuciones,
+        ce.total_contribuciones_equipo,
+        RANK() OVER (PARTITION BY cj.team_id ORDER BY cj.total_contribuciones DESC) AS ranking_jugador
+    FROM contribuciones_por_jugador cj
+    JOIN contribuciones_por_equipo ce ON cj.team_id = ce.team_id
 )
-SELECT
-    c.competition_name,
-    r.season,
-    r.posicion,
-    t.team_name,
-    r.partidos,
-    r.goles_favor,
-    r.goles_contra,
-    r.diferencia_goles,
-    r.puntos
-FROM ranked_teams AS r
-INNER JOIN competition AS c
-    ON c.competition_id = r.competition_id
-INNER JOIN team AS t
-    ON t.team_id = r.team_id
-WHERE r.posicion <= 5
-ORDER BY c.competition_name, r.season, r.posicion;
+
+SELECT 
+	mj.jugador,
+    mj.equipo,
+    mj.total_contribuciones,
+    mj.total_contribuciones_equipo,
+    ROUND(mj.total_contribuciones / NULLIF(mj.total_contribuciones_equipo, 0) * 100,2) AS porcentaje_dependencia
+FROM mejores_jugadores mj
+WHERE ranking_jugador = 1 AND total_contribuciones_equipo >= 100
+ORDER BY porcentaje_dependencia DESC;
+
+-- Conclusión:
+-- Algunos equipos concentran una gran parte de su producción ofensiva
+-- en un único jugador, mientras que otros reparten las contribuciones
+-- entre varios futbolistas. Una dependencia elevada puede convertirse
+-- en un riesgo si ese jugador se lesiona o baja su rendimiento.
 
 
--- Insight 4. Jugadores con mayor produccion ofensiva acumulada.
--- Reutiliza la vista de negocio creada en 01_schema.sql.
+-- Insight 5. Jugadores infravalorados.
+-- Uso la vista de rendimiento para buscar jugadores con buen rating,
+-- pero con menos minutos que la media. Podrían ser perfiles a los que dar más oportunidades.
+
+WITH medias_globales AS (
+    SELECT
+        AVG(rating_medio) AS media_rating_global,
+        AVG(minutos_totales) AS media_minutos_global
+    FROM vw_player_performance_summary
+)
+
 SELECT
-    v.player_name,
+    v.player_name AS jugador,
     v.partidos_jugados,
     v.minutos_totales,
-    v.goles_totales,
-    v.asistencias_totales,
-    v.contribuciones_ofensivas,
-    ROUND(
-        90.0 * v.contribuciones_ofensivas / NULLIF(v.minutos_totales, 0),
-        2
-    ) AS contribuciones_por_90,
-    v.rating_medio
-FROM vw_player_performance_summary AS v
-WHERE v.minutos_totales >= 900
-ORDER BY contribuciones_por_90 DESC, v.contribuciones_ofensivas DESC
-LIMIT 20;
-
-
--- Insight 5. Jugadores que superan el rating medio global.
--- La subquery establece una referencia comun antes de ordenar los mejores rendimientos.
-SELECT
-    v.player_name,
-    v.partidos_jugados,
     v.rating_medio,
-    ROUND(
-        v.rating_medio - (
-            SELECT AVG(s.rating)
-            FROM player_match_stats AS s
-            WHERE s.rating IS NOT NULL
-        ),
-        2
-    ) AS diferencia_sobre_media
-FROM vw_player_performance_summary AS v
-WHERE v.partidos_jugados >= 10
-  AND v.rating_medio > (
-      SELECT AVG(s.rating)
-      FROM player_match_stats AS s
-      WHERE s.rating IS NOT NULL
-  )
-ORDER BY diferencia_sobre_media DESC, v.partidos_jugados DESC
-LIMIT 25;
+    ROUND(m.media_rating_global, 2) AS media_rating_global,
+    ROUND(m.media_minutos_global, 2) AS media_minutos_global
+FROM vw_player_performance_summary v
+CROSS JOIN medias_globales m
+WHERE v.rating_medio > m.media_rating_global
+  AND v.minutos_totales < m.media_minutos_global
+  AND v.partidos_jugados >= 3
+ORDER BY v.rating_medio DESC;
 
+-- Conclusión:
+-- Algunos jugadores mantienen un rendimiento por encima de la media a pesar de
+-- haber disputado menos minutos que la mayoría. Esto sugiere que podrían estar
+-- infrautilizados y merecer más oportunidades de juego.
 
--- Insight 6. Lideres de rendimiento dentro de cada posicion.
--- Se fuerza el indice de jugador y partido porque esta consulta agrega la tabla de hechos por jugador.
-WITH player_position_summary AS (
-    SELECT
-        p.player_id,
-        p.player_name,
-        p.position,
-        COUNT(*) AS partidos,
-        SUM(s.minutes_played) AS minutos,
-        ROUND(AVG(s.rating), 2) AS rating_medio,
-        SUM(s.goals + s.assists) AS contribuciones
-    FROM player_match_stats AS s FORCE INDEX (idx_player_match_stats_player_match)
-    INNER JOIN player AS p
-        ON p.player_id = s.player_id
-    WHERE s.rating IS NOT NULL
-      AND p.position IS NOT NULL
-    GROUP BY p.player_id, p.player_name, p.position
-    HAVING COUNT(*) >= 10
-),
-position_ranking AS (
-    SELECT
-        pps.*,
-        DENSE_RANK() OVER (
-            PARTITION BY pps.position
-            ORDER BY pps.rating_medio DESC, pps.contribuciones DESC
-        ) AS ranking_posicion
-    FROM player_position_summary AS pps
-)
+-- Insight 6. Rendimiento por posición.
+-- Comparo las estadísticas medias de cada posición para ver qué perfiles
+-- destacan en cada aspecto del juego.
+
 SELECT
-    position,
-    ranking_posicion,
-    player_name,
-    partidos,
-    minutos,
-    rating_medio,
-    contribuciones
-FROM position_ranking
-WHERE ranking_posicion <= 5
-ORDER BY position, ranking_posicion, player_name;
-
-
--- Insight 7. Perfil ofensivo y defensivo de cada posicion.
--- Ayuda a comprobar que acciones caracterizan a defensas, centrocampistas y delanteros.
-SELECT
-    p.position,
-    COUNT(*) AS actuaciones,
-    ROUND(AVG(s.minutes_played), 2) AS minutos_medios,
-    ROUND(AVG(s.shots), 2) AS tiros_medios,
-    ROUND(AVG(s.passes_completed), 2) AS pases_medios,
-    ROUND(AVG(s.tackles), 2) AS entradas_medias,
-    ROUND(AVG(s.interceptions), 2) AS intercepciones_medias,
-    ROUND(AVG(s.rating), 2) AS rating_medio
-FROM player_match_stats AS s
-INNER JOIN player AS p
-    ON p.player_id = s.player_id
-WHERE p.position IS NOT NULL
+	p.position,
+    COUNT(DISTINCT p.player_id) as Jugadores,
+    ROUND(AVG(f.rating),2) AS rating_medio,
+    ROUND(AVG(f.goals),2) AS goles_medios,
+    ROUND(AVG(f.assists),2) AS asistencias_medias,
+    ROUND(AVG(f.shots),2) AS tiros_medios,
+    ROUND(AVG(f.passes_completed),2) AS pases_medios,
+    ROUND(AVG(f.tackles),2) AS tackles_medios,
+    ROUND(AVG(f.interceptions),2) AS intercepciones_medias
+FROM player_match_stats f
+JOIN player p ON f.player_id = p.player_id
 GROUP BY p.position
 ORDER BY rating_medio DESC;
 
+-- Conclusión:
+-- Los resultados muestran diferencias claras entre posiciones.
+-- Los delanteros destacan en métricas ofensivas, mientras que defensas
+-- y centrocampistas concentran más acciones defensivas y de construcción de juego.
 
--- Insight 8. Disciplina por competicion y posicion.
--- Relaciona cuatro tablas para localizar los contextos con mas tarjetas por actuacion.
-SELECT
-    c.competition_name,
-    p.position,
-    COUNT(*) AS actuaciones,
-    SUM(s.yellow_cards) AS amarillas,
-    SUM(s.red_cards) AS rojas,
-    ROUND(
-        100.0 * SUM(s.yellow_cards + s.red_cards) / COUNT(*),
-        2
-    ) AS tarjetas_por_100_actuaciones
-FROM player_match_stats AS s
-INNER JOIN player AS p
-    ON p.player_id = s.player_id
-INNER JOIN football_match AS m
-    ON m.match_id = s.match_id
-INNER JOIN competition AS c
-    ON c.competition_id = m.competition_id
-WHERE p.position IS NOT NULL
-GROUP BY c.competition_id, c.competition_name, p.position
-HAVING COUNT(*) >= 20
-ORDER BY tarjetas_por_100_actuaciones DESC, actuaciones DESC;
-
-
--- Insight 9. Representacion y uso de jugadores por nacionalidad.
--- El LEFT JOIN conserva tambien a los jugadores que no tienen estadisticas registradas.
-SELECT
-    COALESCE(p.nationality, 'Sin nacionalidad informada') AS nacionalidad,
-    COUNT(DISTINCT p.player_id) AS jugadores,
-    COUNT(s.stat_id) AS actuaciones_registradas,
-    COALESCE(SUM(s.minutes_played), 0) AS minutos_totales,
-    ROUND(AVG(s.rating), 2) AS rating_medio
-FROM player AS p
-LEFT JOIN player_match_stats AS s
-    ON s.player_id = p.player_id
-GROUP BY COALESCE(p.nationality, 'Sin nacionalidad informada')
-HAVING COUNT(DISTINCT p.player_id) >= 10
-ORDER BY minutos_totales DESC, jugadores DESC;
-
-
--- Insight 10. Evolucion mensual del promedio goleador.
--- La media movil suaviza meses aislados y permite observar tendencias dentro de cada competicion.
-WITH monthly_goals AS (
+-- Insight 7. Mejores jugadores por posición.
+-- Busco los jugadores con mejor rating medio dentro de cada posición.
+WITH rating_jugadores AS (
     SELECT
-        m.competition_id,
-        DATE_FORMAT(m.match_date, '%Y-%m-01') AS month_start,
-        COUNT(*) AS partidos,
-        SUM(m.home_goals + m.away_goals) AS goles,
-        AVG(CAST(m.home_goals + m.away_goals AS DECIMAL(10, 2))) AS goles_por_partido
-    FROM football_match AS m
+        p.player_name,
+        p.position,
+        COUNT(DISTINCT f.match_id) AS partidos,
+        ROUND(AVG(f.rating),2) AS rating_medio
+    FROM player_match_stats f
+    JOIN player p
+        ON f.player_id = p.player_id
     GROUP BY
-        m.competition_id,
-        DATE_FORMAT(m.match_date, '%Y-%m-01')
+        p.player_id,
+        p.player_name,
+        p.position
 ),
-monthly_trend AS (
+ranking_posicion AS (
     SELECT
-        mg.*,
-        AVG(mg.goles_por_partido) OVER (
-            PARTITION BY mg.competition_id
-            ORDER BY mg.month_start
-            ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
-        ) AS media_movil_tres_meses
-    FROM monthly_goals AS mg
+        *,
+        RANK() OVER (
+            PARTITION BY position
+            ORDER BY rating_medio DESC
+        ) AS ranking_posicion
+    FROM rating_jugadores
+    WHERE partidos >= 50
 )
 SELECT
-    c.competition_name,
-    CAST(mt.month_start AS DATE) AS mes,
-    mt.partidos,
-    mt.goles,
-    ROUND(mt.goles_por_partido, 2) AS goles_por_partido,
-    ROUND(mt.media_movil_tres_meses, 2) AS media_movil_tres_meses
-FROM monthly_trend AS mt
-INNER JOIN competition AS c
-    ON c.competition_id = mt.competition_id
-ORDER BY c.competition_name, mes;
+    position,
+    player_name,
+    partidos,
+    rating_medio
+FROM ranking_posicion
+WHERE ranking_posicion <= 5
+ORDER BY
+    position,
+    ranking_posicion;
+
+-- Conclusión:
+-- Al comparar jugadores dentro de su propia posición se observan perfiles
+-- que destacan claramente sobre sus competidores directos. Este análisis
+-- permite identificar referentes en cada rol sin sesgar la comparación
+-- entre posiciones con funciones muy diferentes.
+
+
+
+-- Insight 8. Jugadores con mejor promedio goleador.
+-- Se utiliza el indice de jugador y partido creado en 01_schema.sql.
+SELECT
+    p.player_name,
+    COUNT(*) AS partidos,
+    SUM(s.goals) AS goles,
+    ROUND(AVG(s.goals), 2) AS goles_por_partido
+FROM player_match_stats AS s FORCE INDEX (idx_player_match_stats_player_match)
+JOIN player AS p ON p.player_id = s.player_id
+GROUP BY p.player_id, p.player_name
+HAVING COUNT(*) >= 20
+ORDER BY
+    goles_por_partido DESC,
+    goles DESC
+LIMIT 20;
+
+-- Conclusión:
+-- El ranking muestra qué jugadores tienen mayor capacidad goleadora por partido,
+-- pero se filtra por un mínimo de apariciones para que el resultado no dependa
+-- de casos aislados con pocos registros.
+
+-- Insight 9. Jugadores cuyo rating supera la media general.
+-- Comparo el rating medio de cada jugador con la media global del dataset.
+
+SELECT
+    p.player_name,
+    p.position,
+    COUNT(*) AS partidos,
+    ROUND(AVG(s.rating), 2) AS rating_medio
+FROM player_match_stats AS s
+JOIN player AS p ON p.player_id = s.player_id
+WHERE s.rating IS NOT NULL
+GROUP BY p.player_id, p.player_name, p.position
+HAVING COUNT(*) >= 20
+   AND AVG(s.rating) > (
+       SELECT AVG(rating)
+       FROM player_match_stats
+       WHERE rating IS NOT NULL
+   )
+ORDER BY rating_medio DESC
+LIMIT 20;
+
+-- Conclusión:
+-- Estos jugadores superan el rating medio global del dataset y además tienen
+-- suficientes partidos registrados, por lo que pueden considerarse perfiles
+-- de rendimiento alto y relativamente constante.
+
+-- Insight 10. Evolución goleadora por año.
+-- Analizo si el promedio de goles por partido cambia entre temporadas/años.
+
+SELECT
+    YEAR(match_date) AS anio,
+    COUNT(*) AS partidos,
+    SUM(home_goals + away_goals) AS goles_totales,
+    ROUND(AVG(home_goals + away_goals), 2) AS goles_por_partido
+FROM football_match
+GROUP BY YEAR(match_date)
+HAVING partidos > 100
+ORDER BY anio;
+
+-- Conclusión:
+-- Se observa que el promedio de goles por partido se mantiene relativamente 
+-- estable a lo largo de los años, aunque existen algunas variaciones entre temporadas. 
+-- Estas diferencias pueden estar relacionadas con cambios en el estilo de juego de los equipos, 
+-- el nivel de las competiciones incluidas en la muestra o la presencia de equipos especialmente 
+-- dominantes en determinados periodos.
+
+-- Insight 11. Relación entre eficiencia ofensiva y rating medio.
+-- Analizo si los jugadores clasificados como más eficientes
+-- también obtienen mejores valoraciones medias.
+
+SELECT
+    efficiency_level,
+    COUNT(*) AS jugadores,
+    ROUND(AVG(rating_medio), 2) AS rating_medio_grupo,
+    ROUND(AVG(contribuciones_ofensivas), 2) AS contribuciones_medias,
+    ROUND(AVG(minutos_totales), 2) AS minutos_medios
+FROM vw_player_performance_summary
+WHERE partidos_jugados >= 20
+GROUP BY efficiency_level
+ORDER BY rating_medio_grupo DESC;
+
+-- Conclusión:
+-- Los jugadores clasificados con una eficiencia ofensiva alta suelen presentar
+-- mejores ratings medios que el resto. Esto sugiere que la capacidad de generar
+-- goles y asistencias por minuto jugado está relacionada con una valoración
+-- global más alta de su rendimiento.

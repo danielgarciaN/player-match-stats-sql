@@ -193,7 +193,12 @@ Los índices ayudan a acelerar consultas que se repetirán mucho
 en el análisis exploratorio.
 */
 
--- Lo usaré para consultar rápidamente el rendimiento de un jugador por partido.
+-- Este índice está formado por player_id y match_id.
+-- Se utilizará en consultas que buscan las estadísticas de un jugador
+-- en uno o varios partidos concretos, evitando recorrer toda la tabla
+-- player_match_stats. Esto es especialmente útil porque es la tabla con
+-- más registros del modelo y muchas consultas filtran o agrupan por jugador.
+
 CREATE INDEX idx_player_match_stats_player_match
 ON player_match_stats(player_id, match_id);
 

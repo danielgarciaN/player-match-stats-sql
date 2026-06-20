@@ -10,7 +10,6 @@ SET SQL_SAFE_UPDATES = 0;
 
 /*
 Orden de importación:
-
 1. team.csv
 2. competition.csv
 3. football_match.csv
@@ -21,6 +20,8 @@ Orden de importación:
 
 -- Registro de carga.
 -- Guardo cuántas filas se han importado en cada tabla.
+
+DROP TABLE IF EXISTS data_load_log;
 
 CREATE TABLE IF NOT EXISTS data_load_log (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,7 +75,7 @@ GROUP BY player_id, match_id
 HAVING COUNT(*) > 1;
 
 
--- Segunda comprobación utilizando funciones ventana.
+-- Segunda comprobación utilizando CTE.
 
 WITH estadisticas_repetidas AS (
     SELECT
@@ -224,6 +225,21 @@ LEFT JOIN competition c
     ON c.competition_id = m.competition_id
 WHERE c.competition_id IS NULL;
 
+-- Caso de que un jugador esta en dos equipo (traspaso en el mercado de fichajes)
+SELECT
+    p.player_name,
+    p.player_id,
+    t.team_name
+FROM player p
+JOIN team t
+    ON p.team_id = t.team_id
+WHERE p.player_name IN (
+    SELECT player_name
+    FROM player
+    GROUP BY player_name
+    HAVING COUNT(DISTINCT team_id) > 1
+)
+ORDER BY p.player_name, p.player_id;
 
 -- Resumen final de registros cargados.
 

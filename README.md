@@ -12,6 +12,12 @@ El objetivo es aplicar t√©cnicas de modelado relacional, limpieza de datos y an√
 
 ---
 
+## Video de la presentacion
+
+[Ver video de la presentacion](https://www.loom.com/share/2bcabd1eb1344d5cb5fde0393808aa6b)
+
+---
+
 ## Modelo de datos
 
 El proyecto sigue un modelo dimensional sencillo.

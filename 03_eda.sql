@@ -3,25 +3,49 @@ USE football_stats_db;
 -- 03_eda.sql
 -- Consultas para obtener conclusiones claras sobre los datos de futbol.
 
+-- Insight X. Jugadores por encima de la media de su posición.
+-- Comparo cada jugador con la media de rating de su propia posición, no con la media global.
+-- Así la comparación es más justa porque cada posición tiene funciones distintas.
 
--- Insight 1. Competiciones con mayor promedio de goles.
 SELECT
-    c.competition_name,
+    p.player_name,
+    p.position,
     COUNT(*) AS partidos,
-    SUM(m.home_goals + m.away_goals) AS goles_totales,
-    ROUND(AVG(m.home_goals + m.away_goals), 2) AS goles_por_partido
-FROM football_match AS m
-INNER JOIN competition AS c
-    ON c.competition_id = m.competition_id
+    ROUND(AVG(s.rating), 2) AS rating_medio,
+    ROUND((
+        SELECT AVG(s2.rating)
+        FROM player_match_stats s2
+        JOIN player p2
+            ON p2.player_id = s2.player_id
+        WHERE p2.position = p.position
+          AND s2.rating IS NOT NULL
+    ), 2) AS media_posicion
+FROM player_match_stats AS s
+JOIN player AS p
+    ON p.player_id = s.player_id
+WHERE s.rating IS NOT NULL
 GROUP BY
-    c.competition_id,
-    c.competition_name
-ORDER BY goles_por_partido DESC;
+    p.player_id,
+    p.player_name,
+    p.position
+HAVING COUNT(*) >= 20
+   AND AVG(s.rating) > (
+       SELECT AVG(s3.rating)
+       FROM player_match_stats s3
+       JOIN player p3
+           ON p3.player_id = s3.player_id
+       WHERE p3.position = p.position
+         AND s3.rating IS NOT NULL
+   )
+ORDER BY
+    p.position,
+    rating_medio DESC;
 
 -- Conclusión:
--- Las competiciones femeninas aparecen entre las más goleadoras del dataset,
--- mientras que competiciones como la Copa América o la copa Africa presentan medias más bajas.
--- Esto sugiere diferencias en el estilo de juego, en la producción ofensiva y en la diferencia de nivel entre los quipos
+-- Esta consulta permite detectar jugadores que destacan dentro de su propio rol.
+-- Comparar contra la media de la posición evita mezclar perfiles muy distintos,
+-- como delanteros, defensas o porteros, y ayuda a identificar jugadores realmente
+-- diferenciales dentro de su contexto.
 
 
 
@@ -72,7 +96,6 @@ ORDER BY goles_por_tiro DESC;
 
 
 
-
 -- Insight 4. Dependencia ofensiva de una estrella.
 WITH contribuciones_por_jugador AS(
 	SELECT
@@ -86,7 +109,6 @@ WITH contribuciones_por_jugador AS(
 	JOIN team t ON p.team_id = t.team_id
 	GROUP BY p.player_id, p.player_name, t.team_id, t.team_name
 ),
-
 contribuciones_por_equipo AS (
 	SELECT 
 		team_id,
@@ -97,7 +119,6 @@ contribuciones_por_equipo AS (
 		team_id,
 		equipo
 ),
-
 mejores_jugadores AS (
 	SELECT 
 		cj.equipo,
@@ -108,7 +129,6 @@ mejores_jugadores AS (
     FROM contribuciones_por_jugador cj
     JOIN contribuciones_por_equipo ce ON cj.team_id = ce.team_id
 )
-
 SELECT 
 	mj.jugador,
     mj.equipo,
@@ -136,7 +156,6 @@ WITH medias_globales AS (
         AVG(minutos_totales) AS media_minutos_global
     FROM vw_player_performance_summary
 )
-
 SELECT
     v.player_name AS jugador,
     v.partidos_jugados,
@@ -272,25 +291,27 @@ LIMIT 20;
 -- suficientes partidos registrados, por lo que pueden considerarse perfiles
 -- de rendimiento alto y relativamente constante.
 
--- Insight 10. Evolución goleadora por año.
--- Analizo si el promedio de goles por partido cambia entre temporadas/años.
+-- Insight 10. Evolución goleadora por temporada.
+-- Uso funciones de fecha para analizar si el promedio de goles cambia con el tiempo.
+-- Solo considero años con más de 100 partidos para evitar muestras pequeñas.
 
 SELECT
-    YEAR(match_date) AS anio,
+    YEAR(m.match_date) AS anio,
     COUNT(*) AS partidos,
-    SUM(home_goals + away_goals) AS goles_totales,
-    ROUND(AVG(home_goals + away_goals), 2) AS goles_por_partido
-FROM football_match
-GROUP BY YEAR(match_date)
-HAVING partidos > 100
+    SUM(m.home_goals + m.away_goals) AS goles_totales,
+    ROUND(AVG(m.home_goals + m.away_goals), 2) AS goles_por_partido,
+    MIN(m.match_date) AS primer_partido,
+    MAX(m.match_date) AS ultimo_partido
+FROM football_match AS m
+GROUP BY YEAR(m.match_date)
+HAVING COUNT(*) > 100
 ORDER BY anio;
 
 -- Conclusión:
--- Se observa que el promedio de goles por partido se mantiene relativamente 
--- estable a lo largo de los años, aunque existen algunas variaciones entre temporadas. 
--- Estas diferencias pueden estar relacionadas con cambios en el estilo de juego de los equipos, 
--- el nivel de las competiciones incluidas en la muestra o la presencia de equipos especialmente 
--- dominantes en determinados periodos.
+-- El promedio de goles por partido se mantiene relativamente estable entre años,
+-- aunque existen variaciones según las competiciones y temporadas incluidas en la muestra.
+-- Este análisis ayuda a ver si el dataset refleja cambios generales en la producción ofensiva
+-- a lo largo del tiempo.
 
 -- Insight 11. Relación entre eficiencia ofensiva y rating medio.
 -- Analizo si los jugadores clasificados como más eficientes

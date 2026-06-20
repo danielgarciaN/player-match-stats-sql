@@ -3,43 +3,48 @@ USE football_stats_db;
 -- 03_eda.sql
 -- Consultas para obtener conclusiones claras sobre los datos de futbol.
 
--- Insight X. Jugadores por encima de la media de su posición.
--- Comparo cada jugador con la media de rating de su propia posición, no con la media global.
--- Así la comparación es más justa porque cada posición tiene funciones distintas.
+-- Insight 1. Jugadores por encima de la media de su posición.
+-- Comparo cada jugador con la media de rating de su propia posición.
+-- Así no mezclo perfiles distintos, como defensas, medios o delanteros.
 
 SELECT
-    p.player_name,
-    p.position,
-    COUNT(*) AS partidos,
-    ROUND(AVG(s.rating), 2) AS rating_medio,
-    ROUND((
-        SELECT AVG(s2.rating)
-        FROM player_match_stats s2
-        JOIN player p2
-            ON p2.player_id = s2.player_id
-        WHERE p2.position = p.position
-          AND s2.rating IS NOT NULL
-    ), 2) AS media_posicion
-FROM player_match_stats AS s
-JOIN player AS p
-    ON p.player_id = s.player_id
-WHERE s.rating IS NOT NULL
-GROUP BY
-    p.player_id,
-    p.player_name,
-    p.position
-HAVING COUNT(*) >= 20
-   AND AVG(s.rating) > (
-       SELECT AVG(s3.rating)
-       FROM player_match_stats s3
-       JOIN player p3
-           ON p3.player_id = s3.player_id
-       WHERE p3.position = p.position
-         AND s3.rating IS NOT NULL
-   )
+    pj.player_name,
+    pj.position,
+    pj.partidos,
+    pj.rating_medio,
+    mp.media_posicion
+FROM (
+    SELECT
+        p.player_id,
+        p.player_name,
+        p.position,
+        COUNT(*) AS partidos,
+        ROUND(AVG(s.rating), 2) AS rating_medio
+    FROM player_match_stats s
+    JOIN player p
+        ON p.player_id = s.player_id
+    WHERE s.rating IS NOT NULL
+    GROUP BY
+        p.player_id,
+        p.player_name,
+        p.position
+    HAVING COUNT(*) >= 20
+) AS pj
+JOIN (
+    SELECT
+        p.position,
+        ROUND(AVG(s.rating), 2) AS media_posicion
+    FROM player_match_stats s
+    JOIN player p
+        ON p.player_id = s.player_id
+    WHERE s.rating IS NOT NULL
+    GROUP BY p.position
+) AS mp
+    ON pj.position = mp.position
+WHERE pj.rating_medio > mp.media_posicion
 ORDER BY
-    p.position,
-    rating_medio DESC;
+    pj.position,
+    pj.rating_medio DESC;
 
 -- Conclusión:
 -- Esta consulta permite detectar jugadores que destacan dentro de su propio rol.
